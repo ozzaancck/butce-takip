@@ -1,0 +1,1474 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bütçe Takip</title>
+<meta name="description" content="Gelir ve harcamalarını gir, paranın nereye gittiğini grafiklerle gör. Kayıtlar sadece bu cihazda saklanır.">
+<meta name="theme-color" content="#0f3d2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bütçe">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Manrope:wght@400..800&display=swap">
+<style>
+/* Yerleşim: tek sütunlu telefon kabuğu, üstte yapışkan başlık, altta sabit sekme çubuğu; geniş ekranda 560px ortalı sütun */
+:root {
+  --bg: #f3f6f2;
+  --surface: #ffffff;
+  --surface-2: #e8eee9;
+  --line: #d6dfd8;
+  --fg: #13201a;
+  --fg-2: #46564d;
+  --muted: #6c7b72;
+  --accent: #006c4c;
+  --accent-fg: #ffffff;
+  --accent-soft: #d3efe2;
+  --hero: #0f3d2e;
+  --hero-fg: #eef7f2;
+  --hero-2: #a9d8c3;
+  --hero-neg: #ffb4ab;
+  --income: #1baf7a;
+  --expense: #eb6834;
+  --income-ink: #0b7a52;
+  --expense-ink: #b8471a;
+  --on-bright: #0d1712;
+  --danger: #ba1a1a;
+  --neutral: #898781;
+  --other: #c3c2b7;
+  --backdrop: rgba(8, 20, 14, .45);
+  --c0: #2a78d6; --c1: #eb6834; --c2: #1baf7a; --c3: #eda100;
+  --c4: #e87ba4; --c5: #008300; --c6: #4a3aa7; --c7: #e34948;
+  --ci0: #ffffff; --ci1: #0d1712; --ci2: #0d1712; --ci3: #0d1712;
+  --ci4: #0d1712; --ci5: #ffffff; --ci6: #ffffff; --ci7: #ffffff;
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --tabbar-h: 64px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1310; --surface: #151c18; --surface-2: #1f2823; --line: #2a352f;
+    --fg: #e4ece7; --fg-2: #b4c2ba; --muted: #879690;
+    --accent: #6cdbac; --accent-fg: #00291b; --accent-soft: #143a2c;
+    --hero: #173f31; --hero-fg: #eef7f2; --hero-2: #9fd3bc; --hero-neg: #ffb4ab;
+    --income: #199e70; --expense: #d95926; --income-ink: #4fd6a1; --expense-ink: #ff9466;
+    --on-bright: #0d1712; --danger: #ffb4ab; --neutral: #898781; --other: #5a5954;
+    --backdrop: rgba(0, 0, 0, .6);
+    --c0: #3987e5; --c1: #d95926; --c2: #199e70; --c3: #c98500;
+    --c4: #d55181; --c5: #008300; --c6: #9085e9; --c7: #e66767;
+    --ci0: #ffffff; --ci1: #0d1712; --ci2: #0d1712; --ci3: #0d1712;
+    --ci4: #ffffff; --ci5: #ffffff; --ci6: #0d1712; --ci7: #0d1712;
+    color-scheme: dark;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+html.locked, html.locked body { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: default; opacity: .4; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Ana ekrandan açılınca saatin olduğu şeridin arkası (beyaz yazı okunsun diye koyu yeşil) */
+.statusbar-bg { position: fixed; top: 0; left: 0; right: 0; height: var(--safe-top); background: var(--hero); z-index: 11; }
+
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  padding-inline: max(16px, env(safe-area-inset-left, 0px));
+  padding-block: var(--safe-top) calc(var(--tabbar-h) + 40px + var(--safe-bottom));
+}
+.topbar {
+  position: sticky;
+  top: var(--safe-top);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-block: 14px 10px;
+  background: var(--bg);
+}
+.topbar h1 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#view { display: grid; gap: 14px; }
+
+.icon-btn {
+  width: 40px; height: 40px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  color: var(--fg-2);
+}
+.icon-btn:hover:not(:disabled) { background: var(--surface-2); }
+.icon-btn svg { width: 22px; height: 22px; }
+#back { margin-left: -8px; }
+.top-action { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--fg-2); }
+.top-action svg { width: 18px; height: 18px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 16px;
+  min-width: 0;
+}
+.card.flush { padding: 6px 0; }
+.card-head { display: flex; align-items: center; gap: 8px; }
+.card-head > div { flex: 1; min-width: 0; }
+.card h2 { margin: 0; font-family: var(--font-display); font-size: 18px; font-weight: 650; letter-spacing: -.005em; }
+.card .sub { margin: 2px 0 0; color: var(--fg-2); font-size: 13px; }
+.flush .card-head { padding: 8px 8px 4px 16px; }
+.link-btn { color: var(--accent); font-weight: 700; font-size: 14px; padding: 8px 10px; border-radius: 10px; }
+.link-btn:hover { background: var(--accent-soft); }
+
+/* Bakiye kartı */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--hero);
+  color: var(--hero-fg);
+  border-radius: 24px;
+  padding: 20px 18px 18px;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -46px; top: -46px;
+  width: 170px; height: 170px;
+  border-radius: 50%;
+  background: conic-gradient(var(--hero-2) 0 30%, transparent 30% 32%, rgba(255,255,255,.28) 32% 58%, transparent 58% 60%, rgba(255,255,255,.14) 60% 98%, transparent 98%);
+  -webkit-mask: radial-gradient(circle, transparent 50px, #000 51px);
+  mask: radial-gradient(circle, transparent 50px, #000 51px);
+  opacity: .4;
+  pointer-events: none;
+}
+.hero > * { position: relative; z-index: 1; }
+.hero-label { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--hero-2); }
+.hero-amount {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 11vw, 46px);
+  font-weight: 750;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.hero-amount.neg { color: var(--hero-neg); }
+.hero-warn { margin: 2px 0 0; color: var(--hero-neg); font-size: 13px; font-weight: 600; }
+.hero-sub { margin: 8px 0 0; font-size: 13px; color: var(--hero-2); }
+.hero-sub b { color: var(--hero-fg); font-weight: 700; font-variant-numeric: tabular-nums; }
+.hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.hero-actions .btn { padding: 0 8px; gap: 6px; font-size: clamp(13px, 3.8vw, 15px); white-space: nowrap; }
+.hero-actions .btn svg { width: 16px; height: 16px; }
+@media (max-width: 370px) { .hero-actions .btn svg { display: none; } }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 18px;
+  border-radius: 14px;
+  font-weight: 750;
+  font-size: 15px;
+  text-align: center;
+}
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-income { background: var(--income); color: var(--on-bright); }
+.btn-expense { background: var(--expense); color: var(--on-bright); }
+.btn-primary { background: var(--accent); color: var(--accent-fg); }
+.btn-quiet { background: var(--surface-2); color: var(--fg); }
+.btn-danger { background: var(--danger); color: var(--surface); }
+.btn-outline-danger { border: 1px solid var(--line); color: var(--danger); }
+.btn-block { width: 100%; }
+label.btn { cursor: pointer; }
+
+/* Ay özeti */
+.month-nav { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
+.month-nav h2 { text-align: center; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0 0; }
+.stats div { text-align: center; min-width: 0; }
+.stats dt { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stats dd { margin: 2px 0 0; font-weight: 750; font-size: clamp(12.5px, 3.7vw, 15px); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.inc { color: var(--income-ink); }
+.exp { color: var(--expense-ink); }
+.neg { color: var(--danger); }
+
+/* Halka grafik */
+.donut-wrap { position: relative; width: 208px; max-width: 100%; aspect-ratio: 1; margin: 14px auto 6px; }
+.donut-wrap svg { display: block; width: 100%; height: 100%; }
+.slice { transition: stroke-width .15s ease; cursor: pointer; }
+.slice.active { stroke-width: 32; }
+.donut-center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; pointer-events: none; }
+.donut-center span { max-width: 124px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#dc-label { font-size: 12px; font-weight: 600; color: var(--fg-2); }
+#dc-value { font-family: var(--font-display); font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.legend-list { display: grid; margin-top: 4px; }
+.legend-row {
+  display: grid; grid-template-columns: 12px minmax(0, 1fr) auto auto; align-items: center; gap: 12px;
+  width: 100%; text-align: left; padding: 10px 8px; border-radius: 10px;
+}
+button.legend-row:hover, .legend-row.active { background: var(--surface-2); }
+.legend-row .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--cat); }
+.legend-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.legend-pct { font-size: 13px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.legend-amt { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Çubuk grafik */
+.bars { display: flex; gap: 4px; margin-top: 12px; }
+.bar-col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 6px; border-radius: 12px; }
+.bar-col:hover { background: var(--surface-2); }
+.bar-col.sel { background: var(--accent-soft); }
+.bar-pair { display: flex; align-items: flex-end; justify-content: center; gap: 2px; width: 100%; height: 140px; border-bottom: 1px solid var(--line); }
+.bar { width: 12px; border-radius: 4px 4px 0 0; transition: height .35s ease; }
+.bar.b-inc { background: var(--income); }
+.bar.b-exp { background: var(--expense); }
+.bar-label { font-size: 12px; color: var(--fg-2); }
+.bar-col.sel .bar-label { color: var(--fg); font-weight: 750; }
+.chart-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; margin-top: 10px; font-size: 13px; color: var(--fg-2); }
+.legend-inline { display: flex; gap: 14px; }
+.legend-inline span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-inline i { width: 10px; height: 10px; border-radius: 50%; }
+.readout { margin: 8px 0 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+/* Listeler */
+.list > * + * { border-top: 1px solid var(--line); }
+.row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 62px; padding: 10px 16px; text-align: left; }
+button.row:hover, .row-hit:hover { background: var(--surface-2); }
+.avatar {
+  width: 40px; height: 40px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--cat); color: var(--cat-ink);
+  font-weight: 800; font-size: 16px;
+}
+.avatar.lg { width: 52px; height: 52px; font-size: 20px; }
+.avatar.income { background: var(--income); color: var(--on-bright); }
+.avatar svg { width: 20px; height: 20px; }
+.row-main { flex: 1; min-width: 0; display: grid; }
+.row-title, .row-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-title { font-weight: 650; }
+.row-sub { font-size: 13px; color: var(--fg-2); }
+.row-amt { font-weight: 750; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cat-row { display: flex; align-items: center; padding-right: 6px; }
+.row-hit { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 10px 8px 10px 16px; text-align: left; }
+.group { display: grid; gap: 8px; }
+.group-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; padding: 4px 4px 0; }
+.group-head h3 { margin: 0; font-family: var(--font-display); font-size: 16px; font-weight: 650; }
+.group-head p { margin: 0; display: flex; gap: 12px; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 38px; padding: 0 14px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface);
+  font-size: 14px; font-weight: 650;
+}
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.chip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cat); }
+.chip-add { border-style: dashed; color: var(--accent); }
+
+.notice { margin: 0; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); color: var(--fg-2); font-size: 14px; }
+.notice b { color: var(--fg); }
+.empty { margin: 0; padding: 20px 8px; text-align: center; color: var(--fg-2); font-size: 14px; }
+.steps { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; color: var(--fg-2); }
+.steps b { color: var(--fg); }
+.hint { margin: 0; color: var(--fg-2); font-size: 14px; }
+.summary { display: flex; align-items: center; gap: 14px; }
+.summary p { margin: 0; }
+.summary .big { font-family: var(--font-display); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.summary .small { font-size: 13px; color: var(--fg-2); }
+
+/* Alt sekme çubuğu */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  padding-bottom: var(--safe-bottom);
+}
+.tabbar-inner { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); height: var(--tabbar-h); }
+.tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.tab .pill { display: grid; place-items: center; width: 58px; height: 30px; border-radius: 999px; }
+.tab svg { width: 22px; height: 22px; }
+.tab[aria-current="page"] { color: var(--fg); }
+.tab[aria-current="page"] .pill { background: var(--accent-soft); color: var(--accent); }
+
+.fab {
+  position: fixed; z-index: 9;
+  right: max(16px, calc(50vw - 264px));
+  bottom: calc(var(--tabbar-h) + 16px + var(--safe-bottom));
+  height: 56px; padding: 0 20px 0 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+  border-radius: 18px;
+  background: var(--accent); color: var(--accent-fg);
+  font-weight: 750;
+  box-shadow: 0 6px 18px rgba(0, 50, 35, .28);
+}
+.fab svg { width: 22px; height: 22px; }
+
+/* Alttan açılan pencere */
+#sheet-root { position: fixed; inset: 0; z-index: 20; }
+.sheet-backdrop { position: absolute; inset: 0; background: var(--backdrop); }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  max-width: 560px; margin: 0 auto;
+  max-height: calc(100% - 20px - var(--safe-top));
+  overflow-y: auto; overscroll-behavior: contain;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 8px 16px calc(18px + var(--safe-bottom));
+  animation: sheet-up .22s ease-out;
+}
+@keyframes sheet-up { from { transform: translateY(28px); opacity: .5; } }
+.sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--line); margin: 2px auto 6px; }
+.sheet-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.sheet-head h2 { flex: 1; margin: 0; font-family: var(--font-display); font-size: 21px; font-weight: 700; }
+.sheet-text { margin: 0 0 16px; color: var(--fg-2); }
+.form { display: grid; gap: 16px; }
+.field { display: grid; gap: 6px; }
+.field-label, .field > span { font-size: 13px; font-weight: 700; color: var(--fg-2); }
+input {
+  width: 100%; min-height: 48px; padding: 0 14px;
+  font: inherit; font-size: 16px; color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line); border-radius: 12px;
+}
+input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+input::placeholder { color: var(--muted); }
+input[type="date"] { -webkit-appearance: none; appearance: none; display: flex; align-items: center; }
+input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+.amount-wrap { position: relative; }
+#f-amount { min-height: 62px; padding-right: 44px; font-family: var(--font-display); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.suffix { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 22px; font-weight: 700; color: var(--muted); pointer-events: none; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); }
+.seg button { min-height: 40px; border-radius: 10px; font-weight: 750; color: var(--fg-2); }
+.seg button[aria-checked="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0, 0, 0, .14); }
+.err { color: var(--danger); font-size: 13px; font-weight: 650; }
+.newcat { display: grid; gap: 12px; padding: 14px; border: 1px dashed var(--line); border-radius: 16px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--cat); color: var(--cat-ink); }
+.swatch svg { width: 20px; height: 20px; opacity: 0; }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--fg); }
+.swatch[aria-pressed="true"] svg { opacity: 1; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.actions .btn-primary, .actions .btn-danger { flex: 1; }
+.confirm-inline { display: grid; gap: 10px; padding: 12px; border-radius: 14px; background: var(--surface-2); }
+.confirm-inline p { margin: 0; font-weight: 650; }
+.preview { display: flex; align-items: center; gap: 12px; font-weight: 650; }
+.backup-grid { display: grid; gap: 10px; }
+.facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 14px; }
+.facts dt { color: var(--fg-2); }
+.facts dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+#toast {
+  position: fixed; left: 50%; z-index: 30;
+  bottom: calc(var(--tabbar-h) + 88px + var(--safe-bottom));
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  padding: 10px 16px; border-radius: 12px;
+  background: var(--fg); color: var(--bg);
+  font-size: 14px; font-weight: 650;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="statusbar-bg" aria-hidden="true"></div>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <button class="icon-btn" id="back" data-action="back" aria-label="Geri" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <h1 id="view-title">Bütçem</h1>
+    <button class="top-action" id="backup-btn" data-action="backup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Yedek
+    </button>
+  </header>
+  <main id="view">
+    <section class="hero">
+      <p class="hero-label">Güncel bakiye</p>
+      <p class="hero-amount">₺0,00</p>
+      <p class="hero-sub">Yükleniyor…</p>
+    </section>
+  </main>
+</div>
+
+<nav class="tabbar" aria-label="Bölümler">
+  <div class="tabbar-inner">
+    <button class="tab" data-action="tab" data-view="home" aria-current="page">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 3.05A9 9 0 1 0 20.95 13H11z"/><path d="M13 2.05V11h8.95A9 9 0 0 0 13 2.05z"/></svg></span>Özet
+    </button>
+    <button class="tab" data-action="tab" data-view="entries">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>İşlemler
+    </button>
+    <button class="tab" data-action="tab" data-view="categories">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l5.2 8.5H6.8z"/><circle cx="17.5" cy="17.5" r="4.2"/><rect x="2.8" y="13.3" width="8.4" height="8.4" rx="1.6"/></svg></span>Kategoriler
+    </button>
+  </div>
+</nav>
+
+<button class="fab" id="fab" data-action="fab" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span id="fab-label">Ekle</span>
+</button>
+<div id="sheet-root" hidden></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const TR = 'tr-TR';
+  const NONE = '__none__';
+  const STORE_KEY = 'butce-takip:v1';
+  const BACKUP_KEY = 'butce-takip:lastBackup';
+  const $ = (sel, root = document) => root.querySelector(sel);
+
+  // ---------- Biçimlendirme ----------
+  const moneyFmt = new Intl.NumberFormat(TR, { style: 'currency', currency: 'TRY' });
+  const compactFmt = new Intl.NumberFormat(TR, { notation: 'compact', maximumFractionDigits: 1 });
+  const pctFmt = new Intl.NumberFormat(TR, { style: 'percent', maximumFractionDigits: 1 });
+  const monthFmt = new Intl.DateTimeFormat(TR, { month: 'long', year: 'numeric' });
+  const monthShortFmt = new Intl.DateTimeFormat(TR, { month: 'short' });
+  const dayFmt = new Intl.DateTimeFormat(TR, { day: 'numeric', month: 'long', weekday: 'long' });
+  const dateTimeFmt = new Intl.DateTimeFormat(TR, { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  const money = k => moneyFmt.format(k / 100);
+  const signed = (k, type) => (type === 'income' ? '+' : '−') + money(k);
+  const compact = k => '₺' + compactFmt.format(k / 100);
+  const pad = n => String(n).padStart(2, '0');
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const initial = name => (Array.from(name.trim())[0] || '?').toLocaleUpperCase(TR);
+  const newId = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+
+  function today() {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+  const currentMonth = () => today().slice(0, 7);
+  function addMonths(key, n) {
+    let [y, m] = key.split('-').map(Number);
+    const idx = y * 12 + (m - 1) + n;
+    y = Math.floor(idx / 12);
+    m = idx - y * 12 + 1;
+    return `${y}-${pad(m)}`;
+  }
+  const monthDate = key => { const [y, m] = key.split('-').map(Number); return new Date(y, m - 1, 1); };
+  const monthName = key => monthFmt.format(monthDate(key));
+  const monthShort = key => monthShortFmt.format(monthDate(key));
+  const dayName = s => { const [y, m, d] = s.split('-').map(Number); return dayFmt.format(new Date(y, m - 1, d)); };
+
+  // Tutar girişi: sadece rakam ve tek ondalık ayırıcı (en fazla 2 hane)
+  function sanitizeAmount(raw) {
+    let out = '', sep = false, dec = 0;
+    for (const ch of raw) {
+      if (ch >= '0' && ch <= '9') {
+        if (!sep) out += ch;
+        else if (dec < 2) { out += ch; dec++; }
+      } else if ((ch === ',' || ch === '.') && !sep) {
+        sep = true; out += ',';
+      }
+    }
+    return out.slice(0, 13);
+  }
+  // "1250,5" -> 125050 kuruş; geçersiz ya da sıfırsa null
+  function parseAmount(text) {
+    const t = text.trim();
+    if (!t || t === ',') return null;
+    const [i, f = ''] = t.split(',');
+    const intPart = i === '' ? '0' : i;
+    if (!/^\d+$/.test(intPart) || !/^\d{0,2}$/.test(f)) return null;
+    const k = Number(intPart) * 100 + Number((f + '00').slice(0, 2));
+    return Number.isSafeInteger(k) && k > 0 ? k : null;
+  }
+  function amountToInput(k) {
+    const i = Math.floor(k / 100), f = k % 100;
+    if (f === 0) return String(i);
+    return i + ',' + pad(f).replace(/0$/, '');
+  }
+
+  // ---------- Renkler ----------
+  const colorVar = c => c === null || c === undefined ? 'var(--neutral)' : c === 'other' ? 'var(--other)' : `var(--c${c})`;
+  const inkVar = c => typeof c === 'number' ? `var(--ci${c})` : '#ffffff';
+  const catStyle = c => `--cat:${colorVar(c)};--cat-ink:${inkVar(c)}`;
+
+  const ICON = {
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    minus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg>',
+    left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>',
+    upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>',
+  };
+
+  const DEFAULT_CATEGORIES = [
+    ['market', 'Market'], ['faturalar', 'Faturalar'], ['ulasim', 'Ulaşım'], ['yemek', 'Yemek'],
+    ['eglence', 'Eğlence'], ['saglik', 'Sağlık'], ['kira', 'Kira'], ['giyim', 'Giyim'],
+  ];
+
+  // ---------- Durum ----------
+  const state = {
+    storageOk: true,
+    entries: [],
+    categories: [],
+    view: 'home',           // home | entries | categories | category
+    prevView: 'categories',
+    month: currentMonth(),
+    filter: 'all',
+    detailCat: null,
+  };
+  let sheet = null;
+  let lastFocus = null;
+  let donutSlices = [];
+  let donutTotal = 0;
+
+  const canWrite = () => state.storageOk;
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+
+  function toEntry(d) {
+    if (!d || typeof d !== 'object') return null;
+    const type = d.type === 'income' || d.type === 'expense' ? d.type : null;
+    const amount = Number.isSafeInteger(d.amount) && d.amount > 0 ? d.amount : null;
+    const day = typeof d.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d.day) ? d.day : null;
+    if (!type || amount === null || !day) return null;
+    return {
+      id: typeof d.id === 'string' && d.id ? d.id.slice(0, 64) : newId(),
+      type, amount, day,
+      categoryId: typeof d.categoryId === 'string' ? d.categoryId.slice(0, 64) : null,
+      note: typeof d.note === 'string' ? d.note.slice(0, 120) : '',
+      createdAt: typeof d.createdAt === 'number' ? d.createdAt : 0,
+    };
+  }
+  function toCategory(d) {
+    if (!d || typeof d !== 'object' || typeof d.name !== 'string' || !d.name.trim()) return null;
+    const color = Number.isInteger(d.color) && d.color >= 0 && d.color < 8 ? d.color : 0;
+    return {
+      id: typeof d.id === 'string' && d.id ? d.id.slice(0, 64) : newId(),
+      name: d.name.trim().slice(0, 30), color,
+      createdAt: typeof d.createdAt === 'number' ? d.createdAt : 0,
+    };
+  }
+  const byName = (a, b) => a.name.localeCompare(b.name, TR);
+  const byDate = (a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : b.createdAt - a.createdAt);
+
+  function applyData(data) {
+    state.categories = (Array.isArray(data.categories) ? data.categories : []).map(toCategory).filter(Boolean).sort(byName);
+    state.entries = (Array.isArray(data.entries) ? data.entries : []).map(toEntry).filter(Boolean).sort(byDate);
+  }
+
+  // ---------- Telefonda saklama ----------
+  function readStore() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      return raw === null ? null : JSON.parse(raw);
+    } catch (e) {
+      return undefined;
+    }
+  }
+  function writeStore() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ version: 1, categories: state.categories, entries: state.entries }));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  let persistAsked = false;
+  // Değişikliği uygula ve kaydet; kaydedilemezse eski haline döndür
+  function commit(mutate, okMessage) {
+    const before = JSON.stringify({ categories: state.categories, entries: state.entries });
+    mutate();
+    state.categories.sort(byName);
+    state.entries.sort(byDate);
+    if (!writeStore()) {
+      applyData(JSON.parse(before));
+      toast('Kaydedilemedi. Telefonda yer kalmamış olabilir.');
+      render();
+      return false;
+    }
+    if (!persistAsked && navigator.storage && navigator.storage.persist) {
+      persistAsked = true;
+      navigator.storage.persist().catch(() => {});
+    }
+    render();
+    if (okMessage) toast(okMessage);
+    return true;
+  }
+
+  function loadInitial() {
+    const data = readStore();
+    if (data === undefined) {
+      state.storageOk = false;
+      return;
+    }
+    if (data === null) {
+      // İlk açılış: hazır kategorileri oluştur
+      const now = Date.now();
+      state.categories = DEFAULT_CATEGORIES.map(([id, name], i) => ({ id, name, color: i, createdAt: now })).sort(byName);
+      state.entries = [];
+      state.storageOk = writeStore();
+      return;
+    }
+    applyData(data);
+  }
+
+  // ---------- Hesaplar ----------
+  function catMap() {
+    const m = new Map();
+    for (const c of state.categories) m.set(c.id, c);
+    return m;
+  }
+  // Silinmiş kategoriye bağlı harcama "Kategorisiz" sayılır
+  const catOf = (e, map) => (e.categoryId && map.has(e.categoryId) ? map.get(e.categoryId) : null);
+  function totals(list) {
+    let inc = 0, exp = 0;
+    for (const e of list) { if (e.type === 'income') inc += e.amount; else exp += e.amount; }
+    return { inc, exp, net: inc - exp };
+  }
+  const monthOf = e => e.day.slice(0, 7);
+
+  function expenseSlices(month, map) {
+    const byCat = new Map();
+    let total = 0;
+    for (const e of state.entries) {
+      if (e.type !== 'expense' || monthOf(e) !== month) continue;
+      const c = catOf(e, map);
+      const key = c ? c.id : NONE;
+      byCat.set(key, (byCat.get(key) || 0) + e.amount);
+      total += e.amount;
+    }
+    if (!total) return { total: 0, slices: [] };
+    let slices = [...byCat].map(([key, amount]) => {
+      const c = key === NONE ? null : map.get(key);
+      return { key, name: c ? c.name : 'Kategorisiz', color: c ? c.color : null, amount, fraction: amount / total };
+    }).sort((a, b) => b.amount - a.amount);
+    // 8'den fazla dilim olursa en büyük 7'si kalır, gerisi tek dilimde toplanır
+    if (slices.length > 8) {
+      const kept = slices.slice(0, 7), rest = slices.slice(7);
+      const amount = rest.reduce((s, x) => s + x.amount, 0);
+      slices = [...kept, { key: null, name: `Diğer kategoriler (${rest.length})`, color: 'other', amount, fraction: amount / total, folded: true }];
+    }
+    return { total, slices };
+  }
+
+  function monthBars(selected) {
+    const cur = currentMonth();
+    const end = selected > addMonths(cur, -6) ? cur : selected;
+    const byMonth = new Map();
+    for (const e of state.entries) {
+      const k = monthOf(e);
+      const t = byMonth.get(k) || { inc: 0, exp: 0 };
+      if (e.type === 'income') t.inc += e.amount; else t.exp += e.amount;
+      byMonth.set(k, t);
+    }
+    const out = [];
+    for (let i = 5; i >= 0; i--) {
+      const m = addMonths(end, -i);
+      const t = byMonth.get(m) || { inc: 0, exp: 0 };
+      out.push({ month: m, inc: t.inc, exp: t.exp });
+    }
+    return out;
+  }
+
+  // ---------- Parçalar ----------
+  function entryRow(e, map) {
+    const isInc = e.type === 'income';
+    const c = catOf(e, map);
+    const title = isInc ? (e.note || 'Gelir') : (c ? c.name : 'Kategorisiz');
+    const sub = !isInc && e.note ? `${e.note} · ${dayName(e.day)}` : dayName(e.day);
+    const avatar = isInc
+      ? `<span class="avatar income" aria-hidden="true">${ICON.plus}</span>`
+      : `<span class="avatar" style="${catStyle(c ? c.color : null)}" aria-hidden="true">${esc(initial(title))}</span>`;
+    return `<button class="row" data-action="open-entry" data-id="${esc(e.id)}">
+      ${avatar}
+      <span class="row-main"><span class="row-title">${esc(title)}</span><span class="row-sub">${esc(sub)}</span></span>
+      <span class="row-amt ${isInc ? 'inc' : 'exp'}">${signed(e.amount, e.type)}</span>
+    </button>`;
+  }
+
+  function groupedList(list, map) {
+    const groups = [];
+    let cur = null;
+    for (const e of list) {
+      const m = monthOf(e);
+      if (!cur || cur.month !== m) { cur = { month: m, items: [] }; groups.push(cur); }
+      cur.items.push(e);
+    }
+    return groups.map(g => {
+      const t = totals(g.items);
+      return `<section class="group">
+        <div class="group-head"><h3>${esc(monthName(g.month))}</h3>
+          <p>${t.inc ? `<span class="inc">+${money(t.inc)}</span>` : ''}${t.exp ? `<span class="exp">−${money(t.exp)}</span>` : ''}</p>
+        </div>
+        <div class="card flush list">${g.items.map(e => entryRow(e, map)).join('')}</div>
+      </section>`;
+    }).join('');
+  }
+
+  function statusNotice() {
+    if (!state.storageOk) {
+      return '<p class="notice">Bu tarayıcı kayıt saklamaya izin vermiyor (gizli sekme açık olabilir). Normal bir sekmede ya da ana ekrandaki simgeden aç.</p>';
+    }
+    return '';
+  }
+  function installNotice() {
+    if (!isIOS || isStandalone) return '';
+    return `<p class="notice"><b>Ana ekrana ekle:</b> Safari'de alttaki Paylaş düğmesine, sonra "Ana Ekrana Ekle"ye dokun ve uygulamayı hep o simgeden aç. Ana ekran uygulaması kayıtlarını Safari'den ayrı tutar; kayıt girmeye eklemeden sonra başla.</p>`;
+  }
+
+  // ---------- Görünümler ----------
+  function renderHome() {
+    const map = catMap();
+    const all = totals(state.entries);
+    const neg = all.net < 0;
+    let html = statusNotice() + installNotice();
+
+    html += `<section class="hero" aria-label="Bakiye">
+      <p class="hero-label">Güncel bakiye</p>
+      <p class="hero-amount${neg ? ' neg' : ''}">${money(all.net)}</p>
+      ${neg ? '<p class="hero-warn">Harcamaların gelirini aştı</p>' : ''}
+      <p class="hero-sub">Toplam gelir <b>${money(all.inc)}</b> · Toplam gider <b>${money(all.exp)}</b></p>
+      ${canWrite() ? `<div class="hero-actions">
+        <button class="btn btn-income" data-action="add-income">${ICON.plus}Gelir ekle</button>
+        <button class="btn btn-expense" data-action="add-expense">${ICON.minus}Harcama ekle</button>
+      </div>` : ''}
+    </section>`;
+
+    if (!state.entries.length) {
+      html += `<section class="card">
+        <h2>Nasıl kullanılır?</h2>
+        <ol class="steps">
+          <li><b>Gelir ekle</b> ile maaşını ya da elindeki parayı gir; bakiyen oluşsun.</li>
+          <li>Her harcamanı <b>Harcama ekle</b> ile kategorisini seçerek gir; bakiyenden düşülür.</li>
+          <li>Kendi kategorilerini <b>Kategoriler</b> sekmesinden oluşturabilirsin.</li>
+          <li>Kayıt girdikçe burada, paranın nereye gittiğini grafiklerle göreceksin.</li>
+        </ol>
+        <p class="sub" style="margin-top:12px">Kayıtların sadece bu cihazda durur ve internet olmadan da çalışır. Ara sıra sağ üstteki <b>Yedek</b> ile yedek al.</p>
+      </section>`;
+      return html;
+    }
+
+    const m = state.month;
+    const mt = totals(state.entries.filter(e => monthOf(e) === m));
+    const canNext = m < currentMonth();
+    html += `<section class="card">
+      <div class="month-nav">
+        <button class="icon-btn" data-action="month-prev" aria-label="Önceki ay">${ICON.left}</button>
+        <h2>${esc(monthName(m))}</h2>
+        <button class="icon-btn" data-action="month-next" aria-label="Sonraki ay"${canNext ? '' : ' disabled'}>${ICON.right}</button>
+      </div>
+      <dl class="stats">
+        <div><dt>Gelir</dt><dd class="inc">+${money(mt.inc)}</dd></div>
+        <div><dt>Gider</dt><dd class="exp">−${money(mt.exp)}</dd></div>
+        <div><dt>Kalan</dt><dd class="${mt.net < 0 ? 'neg' : ''}">${money(mt.net)}</dd></div>
+      </dl>
+    </section>`;
+
+    const { total, slices } = expenseSlices(m, map);
+    donutSlices = slices;
+    donutTotal = total;
+    html += `<section class="card">
+      <h2>Paran nereye gitti?</h2>
+      <p class="sub">${esc(monthName(m))} harcamalarının kategorilere dağılımı</p>
+      ${slices.length ? donut(slices, total) : '<p class="empty">Bu ay henüz harcama girilmemiş.</p>'}
+    </section>`;
+
+    const bars = monthBars(m);
+    const max = Math.max(1, ...bars.map(b => Math.max(b.inc, b.exp)));
+    const sel = bars.find(b => b.month === m);
+    html += `<section class="card">
+      <h2>Aylık gelir ve gider</h2>
+      <p class="sub">Bir aya dokunarak o ayın detayını görebilirsin</p>
+      <div class="bars" role="group" aria-label="Son 6 ayın gelir ve gideri">
+        ${bars.map(b => {
+          const label = `${monthName(b.month)}: gelir ${money(b.inc)}, gider ${money(b.exp)}`;
+          return `<button class="bar-col${b.month === m ? ' sel' : ''}" data-action="select-month" data-month="${b.month}" aria-label="${esc(label)}" title="${esc(label)}">
+            <span class="bar-pair">
+              <span class="bar b-inc" style="height:${b.inc ? `max(2px, ${(b.inc / max * 100).toFixed(2)}%)` : '0'}"></span>
+              <span class="bar b-exp" style="height:${b.exp ? `max(2px, ${(b.exp / max * 100).toFixed(2)}%)` : '0'}"></span>
+            </span>
+            <span class="bar-label">${esc(monthShort(b.month))}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="chart-foot">
+        <span class="legend-inline"><span><i style="background:var(--income)"></i>Gelir</span><span><i style="background:var(--expense)"></i>Gider</span></span>
+        <span>Ölçek: en yüksek ${compact(max)}</span>
+      </div>
+      ${sel ? `<p class="readout"><b>${esc(monthName(sel.month))}</b> · <span class="inc">+${money(sel.inc)}</span> · <span class="exp">−${money(sel.exp)}</span></p>` : ''}
+    </section>`;
+
+    html += `<section class="card flush">
+      <div class="card-head"><div><h2>Son işlemler</h2></div><button class="link-btn" data-action="tab" data-view="entries">Tümünü gör</button></div>
+      <div class="list">${state.entries.slice(0, 5).map(e => entryRow(e, map)).join('')}</div>
+    </section>`;
+    return html;
+  }
+
+  function donut(slices, total) {
+    const R = 78, SW = 26, C = 2 * Math.PI * R;
+    const gap = slices.length > 1 ? 2.4 : 0;
+    let offset = 0;
+    const circles = slices.map((s, i) => {
+      const len = s.fraction * C;
+      const dash = Math.max(len - gap, 0.01);
+      const el = `<circle class="slice" data-slice="${i}" cx="100" cy="100" r="${R}" fill="none" stroke-width="${SW}"
+        style="stroke:${colorVar(s.color)}" stroke-dasharray="${dash.toFixed(3)} ${C.toFixed(3)}"
+        stroke-dashoffset="${(-(offset + gap / 2)).toFixed(3)}" transform="rotate(-90 100 100)"><title>${esc(s.name)}: ${money(s.amount)}</title></circle>`;
+      offset += len;
+      return el;
+    }).join('');
+    const legend = slices.map((s, i) => {
+      const inner = `<i class="dot"></i><span class="legend-name">${esc(s.name)}</span><span class="legend-pct">${pctFmt.format(s.fraction)}</span><span class="legend-amt">${money(s.amount)}</span>`;
+      return s.folded
+        ? `<div class="legend-row" data-slice="${i}" style="${catStyle(s.color)}">${inner}</div>`
+        : `<button class="legend-row" data-slice="${i}" data-action="open-category" data-id="${esc(s.key)}" style="${catStyle(s.color)}">${inner}</button>`;
+    }).join('');
+    return `<div class="donut-wrap">
+        <svg viewBox="0 0 200 200" role="img" aria-label="Kategorilere göre harcama dağılımı">${circles}</svg>
+        <div class="donut-center"><span id="dc-label">Toplam gider</span><span id="dc-value">${money(total)}</span></div>
+      </div>
+      <div class="legend-list">${legend}</div>`;
+  }
+
+  function setDonutFocus(i) {
+    const label = $('#dc-label'), value = $('#dc-value');
+    if (!label || !value) return;
+    const s = i === null ? null : donutSlices[i];
+    label.textContent = s ? s.name : 'Toplam gider';
+    value.textContent = money(s ? s.amount : donutTotal);
+    document.querySelectorAll('[data-slice]').forEach(el => el.classList.toggle('active', s !== null && Number(el.dataset.slice) === i));
+  }
+
+  function renderEntries() {
+    const map = catMap();
+    const list = state.filter === 'all' ? state.entries : state.entries.filter(e => e.type === state.filter);
+    const chip = (key, label) => `<button class="chip" data-action="filter" data-filter="${key}" aria-pressed="${state.filter === key}">${label}</button>`;
+    let html = statusNotice();
+    html += `<div class="chips">${chip('all', 'Tümü')}${chip('income', 'Gelirler')}${chip('expense', 'Giderler')}</div>`;
+    if (!list.length) {
+      html += `<p class="empty">${state.entries.length ? 'Bu filtrede işlem yok.' : 'Henüz hiç işlem yok. Sağ alttaki Ekle ile ilk kaydını gir.'}</p>`;
+    } else {
+      html += groupedList(list, map);
+    }
+    return html;
+  }
+
+  function categoryStats(map) {
+    const cur = currentMonth();
+    const stats = new Map();
+    for (const e of state.entries) {
+      if (e.type !== 'expense') continue;
+      const c = catOf(e, map);
+      const key = c ? c.id : NONE;
+      const s = stats.get(key) || { month: 0, count: 0 };
+      if (monthOf(e) === cur) s.month += e.amount;
+      s.count += 1;
+      stats.set(key, s);
+    }
+    return stats;
+  }
+
+  function renderCategories() {
+    const map = catMap();
+    const stats = categoryStats(map);
+    let html = statusNotice();
+    html += '<p class="hint">Harcamalarını sınıflandırmak için kendi kategorilerini oluştur. Bir kategoriye dokunarak içindeki harcamaları görebilirsin.</p>';
+    if (canWrite()) html += `<button class="btn btn-primary btn-block" data-action="new-category">${ICON.plus}Yeni kategori</button>`;
+    const rows = state.categories.map(c => {
+      const s = stats.get(c.id) || { month: 0, count: 0 };
+      return `<div class="cat-row">
+        <button class="row-hit" data-action="open-category" data-id="${esc(c.id)}">
+          <span class="avatar" style="${catStyle(c.color)}" aria-hidden="true">${esc(initial(c.name))}</span>
+          <span class="row-main"><span class="row-title">${esc(c.name)}</span><span class="row-sub">Bu ay ${money(s.month)} · ${s.count} harcama</span></span>
+        </button>
+        ${canWrite() ? `<button class="icon-btn" data-action="edit-category" data-id="${esc(c.id)}" aria-label="${esc(c.name)} kategorisini düzenle">${ICON.edit}</button>
+        <button class="icon-btn" data-action="delete-category" data-id="${esc(c.id)}" aria-label="${esc(c.name)} kategorisini sil">${ICON.trash}</button>` : ''}
+      </div>`;
+    });
+    const none = stats.get(NONE);
+    if (none) {
+      rows.push(`<div class="cat-row">
+        <button class="row-hit" data-action="open-category" data-id="${NONE}">
+          <span class="avatar" style="${catStyle(null)}" aria-hidden="true">K</span>
+          <span class="row-main"><span class="row-title">Kategorisiz</span><span class="row-sub">Bu ay ${money(none.month)} · ${none.count} harcama · silinen kategorilerden kalanlar</span></span>
+        </button>
+      </div>`);
+    }
+    html += rows.length
+      ? `<div class="card flush list">${rows.join('')}</div>`
+      : '<p class="empty">Henüz kategori yok.</p>';
+    return html;
+  }
+
+  function detailInfo() {
+    const map = catMap();
+    const id = state.detailCat;
+    const cat = id && id !== NONE ? map.get(id) || null : null;
+    const name = cat ? cat.name : id === NONE ? 'Kategorisiz' : 'Kategori';
+    return { map, id, cat, name };
+  }
+
+  function renderCategoryDetail() {
+    const { map, id, cat, name } = detailInfo();
+    if (id !== NONE && !cat) return '<p class="empty">Bu kategori silinmiş.</p>';
+    const list = state.entries.filter(e => {
+      if (e.type !== 'expense') return false;
+      const c = catOf(e, map);
+      return id === NONE ? !c : c && c.id === id;
+    });
+    const cur = currentMonth();
+    const monthSum = list.filter(e => monthOf(e) === cur).reduce((s, e) => s + e.amount, 0);
+    const total = list.reduce((s, e) => s + e.amount, 0);
+    let html = `<section class="card summary">
+      <span class="avatar lg" style="${catStyle(cat ? cat.color : null)}" aria-hidden="true">${esc(initial(name))}</span>
+      <div><p class="big exp">Bu ay ${money(monthSum)}</p><p class="small">Toplam ${money(total)} · ${list.length} harcama</p></div>
+    </section>`;
+    html += list.length ? groupedList(list, map) : '<p class="empty">Bu kategoride henüz harcama yok.</p>';
+    return html;
+  }
+
+  function render() {
+    const v = state.view;
+    const titles = { home: 'Bütçem', entries: 'İşlemler', categories: 'Kategoriler' };
+    $('#view-title').textContent = v === 'category' ? detailInfo().name : titles[v];
+    $('#back').hidden = v !== 'category';
+    $('#backup-btn').hidden = v === 'category';
+    document.querySelectorAll('.tab').forEach(t => {
+      const on = t.dataset.view === (v === 'category' ? state.prevView : v);
+      if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+    });
+    $('#view').innerHTML = v === 'home' ? renderHome()
+      : v === 'entries' ? renderEntries()
+      : v === 'categories' ? renderCategories()
+      : renderCategoryDetail();
+
+    const fab = $('#fab');
+    const detail = v === 'category' ? detailInfo() : null;
+    fab.hidden = !canWrite() || !(v === 'entries' || (detail && detail.cat));
+    $('#fab-label').textContent = v === 'category' ? 'Harcama ekle' : 'Ekle';
+  }
+
+  function go(view) {
+    if (view === state.view) return;
+    state.view = view;
+    state.detailCat = null;
+    render();
+    window.scrollTo(0, 0);
+  }
+
+  let toastTimer = 0;
+  function toast(msg) {
+    const el = $('#toast');
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, 3200);
+  }
+
+  function nameError(name, exceptId) {
+    if (!name) return 'Kategoriye bir ad ver.';
+    const low = name.toLocaleLowerCase(TR);
+    if (state.categories.some(c => c.id !== exceptId && c.name.toLocaleLowerCase(TR) === low)) return 'Bu isimde bir kategori zaten var.';
+    return null;
+  }
+  function suggestColor() {
+    const used = new Set(state.categories.map(c => c.color));
+    for (let i = 0; i < 8; i++) if (!used.has(i)) return i;
+    return state.categories.length % 8;
+  }
+  function swatches(selected, action) {
+    return Array.from({ length: 8 }, (_, i) =>
+      `<button type="button" class="swatch" data-action="${action}" data-color="${i}" aria-pressed="${i === selected}" aria-label="Renk ${i + 1}" style="${catStyle(i)}">${ICON.check}</button>`
+    ).join('');
+  }
+  function markSwatches(container, selected) {
+    container.querySelectorAll('.swatch').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.color) === selected)));
+  }
+
+  // ---------- Alttan açılan pencereler ----------
+  function openSheet(html, ctx) {
+    lastFocus = document.activeElement;
+    const root = $('#sheet-root');
+    root.innerHTML = `<div class="sheet-backdrop" data-action="sheet-close"></div>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title"><div class="sheet-handle"></div>${html}</div>`;
+    root.hidden = false;
+    document.documentElement.classList.add('locked');
+    sheet = ctx;
+  }
+  function closeSheet() {
+    const root = $('#sheet-root');
+    root.hidden = true;
+    root.innerHTML = '';
+    sheet = null;
+    document.documentElement.classList.remove('locked');
+    if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+  }
+  const sheetHead = title => `<header class="sheet-head"><h2 id="sheet-title">${esc(title)}</h2>
+    <button type="button" class="icon-btn" data-action="sheet-close" aria-label="Kapat">${ICON.close}</button></header>`;
+
+  // Gelir / harcama formu
+  function openEntrySheet({ id = null, type = 'expense', categoryId = null } = {}) {
+    if (!canWrite()) return;
+    const existing = id ? state.entries.find(e => e.id === id) : null;
+    if (id && !existing) { toast('Bu kayıt bulunamadı.'); return; }
+    const ctx = {
+      kind: 'entry',
+      id: existing ? existing.id : null,
+      type: existing ? existing.type : type,
+      categoryId: existing ? existing.categoryId : categoryId,
+      createdAt: existing ? existing.createdAt : 0,
+      ncColor: suggestColor(),
+    };
+    const html = sheetHead(existing ? 'İşlemi düzenle' : '') + `
+      <form class="form" id="entry-form" novalidate>
+        <div class="seg" role="radiogroup" aria-label="Kayıt türü">
+          <button type="button" role="radio" data-action="form-type" data-type="income">Gelir</button>
+          <button type="button" role="radio" data-action="form-type" data-type="expense">Harcama</button>
+        </div>
+        <label class="field"><span>Tutar</span>
+          <span class="amount-wrap"><input id="f-amount" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-describedby="err-amount"><span class="suffix">₺</span></span>
+          <small class="err" id="err-amount" hidden>Geçerli bir tutar gir (ör. 250 ya da 99,90).</small>
+        </label>
+        <div class="field" id="cat-section">
+          <span class="field-label">Kategori</span>
+          <div class="chips" id="f-chips"></div>
+          <div class="newcat" id="newcat" hidden>
+            <label class="field"><span>Yeni kategori adı</span><input id="nc-name" maxlength="30" autocomplete="off" placeholder="ör. Kahve, Spor, Evcil hayvan"></label>
+            <div class="swatches" id="nc-swatches">${swatches(ctx.ncColor, 'nc-color')}</div>
+            <small class="err" id="nc-err" hidden></small>
+            <div class="actions"><button type="button" class="btn btn-quiet" data-action="nc-cancel">Vazgeç</button><button type="button" class="btn btn-primary" data-action="nc-save">Kategoriyi ekle</button></div>
+          </div>
+          <small class="err" id="err-cat" hidden>Harcamanın hangi kategoriye ait olduğunu seç.</small>
+        </div>
+        <label class="field"><span id="note-label">Not (isteğe bağlı)</span><input id="f-note" maxlength="80" autocomplete="off"></label>
+        <label class="field"><span>Tarih</span><input id="f-day" type="date" required aria-describedby="err-day"><small class="err" id="err-day" hidden>Bir tarih seç.</small></label>
+        <div id="entry-actions" class="actions">
+          ${existing ? `<button type="button" class="btn btn-outline-danger" data-action="entry-delete">${ICON.trash}Sil</button>` : ''}
+          <button type="submit" class="btn btn-primary" id="f-save">Kaydet</button>
+        </div>
+      </form>`;
+    openSheet(html, ctx);
+    $('#f-amount').value = existing ? amountToInput(existing.amount) : '';
+    $('#f-note').value = existing ? existing.note : '';
+    $('#f-day').value = existing ? existing.day : today();
+    applyEntryType();
+    renderChips();
+    if (!existing) $('#f-amount').focus();
+    else $('#sheet-root .sheet-head .icon-btn').focus({ preventScroll: true });
+  }
+
+  function applyEntryType() {
+    if (!sheet || sheet.kind !== 'entry') return;
+    const inc = sheet.type === 'income';
+    document.querySelectorAll('.seg [data-type]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.type === sheet.type)));
+    $('#cat-section').hidden = inc;
+    $('#note-label').textContent = inc ? 'Açıklama (ör. Maaş, Kira geliri)' : 'Not (isteğe bağlı)';
+    if (!sheet.id) $('#sheet-title').textContent = inc ? 'Gelir ekle' : 'Harcama ekle';
+  }
+
+  function renderChips() {
+    const wrap = $('#f-chips');
+    if (!wrap || !sheet || sheet.kind !== 'entry') return;
+    const chips = state.categories.map(c =>
+      `<button type="button" class="chip" data-action="pick-cat" data-id="${esc(c.id)}" aria-pressed="${c.id === sheet.categoryId}" style="${catStyle(c.color)}"><i class="dot"></i>${esc(c.name)}</button>`
+    );
+    chips.push(`<button type="button" class="chip chip-add" data-action="nc-open">+ Yeni kategori</button>`);
+    wrap.innerHTML = chips.join('');
+  }
+
+  function saveEntry() {
+    const f = sheet;
+    if (!f || f.kind !== 'entry') return;
+    const amount = parseAmount($('#f-amount').value);
+    const day = $('#f-day').value;
+    const catOk = f.type === 'income' || state.categories.some(c => c.id === f.categoryId);
+    const dayOk = /^\d{4}-\d{2}-\d{2}$/.test(day);
+    $('#err-amount').hidden = amount !== null;
+    $('#err-cat').hidden = catOk;
+    $('#err-day').hidden = dayOk;
+    if (amount === null) { $('#f-amount').focus(); return; }
+    if (!catOk || !dayOk) return;
+
+    const entry = {
+      id: f.id || newId(),
+      type: f.type,
+      amount,
+      categoryId: f.type === 'expense' ? f.categoryId : null,
+      note: $('#f-note').value.trim().slice(0, 80),
+      day,
+      createdAt: f.createdAt || Date.now(),
+    };
+    const ok = commit(() => {
+      if (f.id) state.entries = state.entries.map(e => (e.id === f.id ? entry : e));
+      else state.entries.push(entry);
+    }, f.id ? 'Değişiklik kaydedildi' : f.type === 'income' ? 'Gelir eklendi' : 'Harcama eklendi');
+    if (ok) closeSheet();
+  }
+
+  function saveInlineCategory() {
+    const f = sheet;
+    if (!f || f.kind !== 'entry') return;
+    const name = $('#nc-name').value.trim();
+    const err = nameError(name, null);
+    const errEl = $('#nc-err');
+    errEl.textContent = err || '';
+    errEl.hidden = !err;
+    if (err) { $('#nc-name').focus(); return; }
+    const id = newId();
+    const ok = commit(() => { state.categories.push({ id, name, color: f.ncColor, createdAt: Date.now() }); });
+    if (!ok || sheet !== f) return;
+    f.categoryId = id;
+    $('#newcat').hidden = true;
+    $('#nc-name').value = '';
+    $('#err-cat').hidden = true;
+    renderChips();
+  }
+
+  // Kategori ekleme / düzenleme
+  function openCategorySheet(id = null) {
+    if (!canWrite()) return;
+    const existing = id ? state.categories.find(c => c.id === id) : null;
+    const ctx = { kind: 'category', id: existing ? existing.id : null, color: existing ? existing.color : suggestColor(), createdAt: existing ? existing.createdAt : 0 };
+    const html = sheetHead(existing ? 'Kategoriyi düzenle' : 'Yeni kategori') + `
+      <form class="form" id="cat-form" novalidate>
+        <label class="field"><span>Kategori adı</span><input id="c-name" maxlength="30" autocomplete="off" placeholder="ör. Kahve, Spor, Evcil hayvan" aria-describedby="c-err"><small class="err" id="c-err" hidden></small></label>
+        <div class="field"><span class="field-label">Renk</span><div class="swatches" id="c-swatches">${swatches(ctx.color, 'cs-color')}</div></div>
+        <div class="preview"><span class="avatar" id="c-prev-av"></span><span id="c-prev-name"></span></div>
+        <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button><button type="submit" class="btn btn-primary" id="c-save">Kaydet</button></div>
+      </form>`;
+    openSheet(html, ctx);
+    $('#c-name').value = existing ? existing.name : '';
+    updateCategoryPreview();
+    $('#c-name').focus();
+  }
+  function updateCategoryPreview() {
+    if (!sheet || sheet.kind !== 'category') return;
+    const name = $('#c-name').value.trim();
+    const av = $('#c-prev-av');
+    av.setAttribute('style', catStyle(sheet.color));
+    av.textContent = initial(name || '?');
+    $('#c-prev-name').textContent = name || 'Önizleme';
+  }
+  function saveCategory() {
+    const f = sheet;
+    if (!f || f.kind !== 'category') return;
+    const name = $('#c-name').value.trim();
+    const err = nameError(name, f.id);
+    $('#c-err').textContent = err || '';
+    $('#c-err').hidden = !err;
+    if (err) { $('#c-name').focus(); return; }
+    const ok = commit(() => {
+      if (f.id) state.categories = state.categories.map(c => (c.id === f.id ? { ...c, name, color: f.color } : c));
+      else state.categories.push({ id: newId(), name, color: f.color, createdAt: Date.now() });
+    }, f.id ? 'Kategori güncellendi' : 'Kategori eklendi');
+    if (ok) closeSheet();
+  }
+
+  function openConfirm({ title, text, confirmLabel, onConfirm }) {
+    openSheet(sheetHead(title) + `<p class="sheet-text">${esc(text)}</p>
+      <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button>
+      <button type="button" class="btn btn-danger" data-action="confirm-ok">${esc(confirmLabel)}</button></div>`, { kind: 'confirm', onConfirm });
+    $('#sheet-root .btn-quiet').focus();
+  }
+
+  function askDeleteCategory(id) {
+    const c = state.categories.find(x => x.id === id);
+    if (!c) return;
+    const count = state.entries.filter(e => e.type === 'expense' && e.categoryId === id).length;
+    openConfirm({
+      title: 'Kategori silinsin mi?',
+      text: count
+        ? `"${c.name}" silinecek. İçindeki ${count} harcama silinmez, "Kategorisiz" olarak kalır; bakiyen değişmez. İstersen bu harcamaları sonra düzenleyip başka kategoriye taşıyabilirsin.`
+        : `"${c.name}" kategorisi silinecek.`,
+      confirmLabel: 'Sil',
+      onConfirm: () => commit(() => { state.categories = state.categories.filter(x => x.id !== id); }, 'Kategori silindi'),
+    });
+  }
+
+  function showEntryDeleteConfirm(show) {
+    const box = $('#entry-actions');
+    if (!box) return;
+    box.innerHTML = show
+      ? `<div class="confirm-inline" style="flex:1"><p>Bu kayıt silinsin mi? Bakiyen buna göre güncellenir.</p>
+          <div class="actions"><button type="button" class="btn btn-quiet" data-action="entry-delete-cancel">Vazgeç</button>
+          <button type="button" class="btn btn-danger" data-action="entry-delete-confirm">Sil</button></div></div>`
+      : `<button type="button" class="btn btn-outline-danger" data-action="entry-delete">${ICON.trash}Sil</button>
+         <button type="submit" class="btn btn-primary" id="f-save">Kaydet</button>`;
+    const focusEl = box.querySelector(show ? '.btn-quiet' : '.btn-outline-danger');
+    if (focusEl) focusEl.focus();
+  }
+
+  // ---------- Yedekleme ----------
+  function lastBackupText() {
+    try {
+      const t = Number(localStorage.getItem(BACKUP_KEY));
+      return t ? dateTimeFmt.format(new Date(t)) : 'Hiç alınmadı';
+    } catch (e) {
+      return 'Bilinmiyor';
+    }
+  }
+  function openBackupSheet() {
+    const html = sheetHead('Yedekleme') + `
+      <p class="sheet-text">Kayıtların sadece bu cihazda duruyor. Uygulamayı ana ekrandan silersen ya da telefon değiştirirsen kaybolur. Ara sıra yedek al ve dosyayı iCloud Drive'a (Dosyalar'a) kaydet.</p>
+      <dl class="facts">
+        <dt>Kayıtlar</dt><dd>${state.entries.length} işlem, ${state.categories.length} kategori</dd>
+        <dt>Son yedek</dt><dd>${esc(lastBackupText())}</dd>
+      </dl>
+      <div id="backup-body" class="backup-grid" style="margin-top:16px">
+        <button type="button" class="btn btn-primary btn-block" data-action="export">${ICON.download}Yedeği dışa aktar</button>
+        <label class="btn btn-quiet btn-block" for="import-file">${ICON.upload}Yedekten geri yükle</label>
+        <input type="file" id="import-file" class="visually-hidden" accept="application/json,.json">
+      </div>`;
+    openSheet(html, { kind: 'backup' });
+    $('#sheet-root .sheet-head .icon-btn').focus({ preventScroll: true });
+  }
+
+  async function exportBackup() {
+    const payload = {
+      app: 'butce-takip',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      categories: state.categories,
+      entries: state.entries,
+    };
+    const name = `butce-yedek-${today()}.json`;
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    let done = false;
+    try {
+      const file = new File([blob], name, { type: 'application/json' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Bütçe yedeği' });
+        done = true;
+      }
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;
+    }
+    if (!done) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+    try { localStorage.setItem(BACKUP_KEY, String(Date.now())); } catch (e) { /* önemsiz */ }
+    closeSheet();
+    toast('Yedek hazırlandı');
+  }
+
+  function handleImportFile(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      let data;
+      try { data = JSON.parse(String(reader.result)); } catch (e) { data = null; }
+      const body = $('#backup-body');
+      if (!body || !sheet || sheet.kind !== 'backup') return;
+      if (!data || data.app !== 'butce-takip' || !Array.isArray(data.entries) || !Array.isArray(data.categories)) {
+        toast('Bu dosya bir Bütçe Takip yedeği değil.');
+        return;
+      }
+      const cats = data.categories.map(toCategory).filter(Boolean);
+      const ents = data.entries.map(toEntry).filter(Boolean);
+      sheet.pending = { categories: cats, entries: ents };
+      body.innerHTML = `<div class="confirm-inline"><p>Yedekte ${ents.length} işlem ve ${cats.length} kategori var. Şu anki kayıtların silinip yerine yedektekiler yüklenecek.</p>
+        <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button>
+        <button type="button" class="btn btn-danger" data-action="import-confirm">Geri yükle</button></div></div>`;
+      body.querySelector('.btn-quiet').focus();
+    };
+    reader.onerror = () => toast('Dosya okunamadı.');
+    reader.readAsText(file);
+  }
+
+  // ---------- Olaylar ----------
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-action]');
+    if (!t) return;
+    const a = t.dataset.action;
+    const id = t.dataset.id;
+    switch (a) {
+      case 'tab': go(t.dataset.view); break;
+      case 'back': go(state.prevView || 'categories'); break;
+      case 'backup': openBackupSheet(); break;
+      case 'export': exportBackup(); break;
+      case 'import-confirm': {
+        const p = sheet && sheet.pending;
+        if (!p) break;
+        const ok = commit(() => { state.categories = p.categories; state.entries = p.entries; }, 'Yedek geri yüklendi');
+        if (ok) closeSheet();
+        break;
+      }
+      case 'add-income': openEntrySheet({ type: 'income' }); break;
+      case 'add-expense': openEntrySheet({ type: 'expense' }); break;
+      case 'fab':
+        if (state.view === 'category') openEntrySheet({ type: 'expense', categoryId: state.detailCat });
+        else openEntrySheet({ type: state.filter === 'income' ? 'income' : 'expense' });
+        break;
+      case 'month-prev': state.month = addMonths(state.month, -1); render(); break;
+      case 'month-next': if (state.month < currentMonth()) { state.month = addMonths(state.month, 1); render(); } break;
+      case 'select-month': state.month = t.dataset.month; render(); break;
+      case 'open-entry': openEntrySheet({ id }); break;
+      case 'filter': state.filter = t.dataset.filter; render(); break;
+      case 'open-category':
+        if (state.view !== 'category') state.prevView = state.view;
+        state.view = 'category';
+        state.detailCat = id || NONE;
+        render();
+        window.scrollTo(0, 0);
+        break;
+      case 'new-category': openCategorySheet(); break;
+      case 'edit-category': openCategorySheet(id); break;
+      case 'delete-category': askDeleteCategory(id); break;
+      case 'sheet-close': closeSheet(); break;
+      case 'form-type':
+        if (sheet && sheet.kind === 'entry') { sheet.type = t.dataset.type; applyEntryType(); }
+        break;
+      case 'pick-cat':
+        if (sheet && sheet.kind === 'entry') { sheet.categoryId = id; $('#err-cat').hidden = true; renderChips(); }
+        break;
+      case 'nc-open':
+        if (sheet && sheet.kind === 'entry') { $('#newcat').hidden = false; $('#nc-name').focus(); }
+        break;
+      case 'nc-cancel':
+        $('#newcat').hidden = true; $('#nc-err').hidden = true; $('#nc-name').value = '';
+        break;
+      case 'nc-color':
+        if (sheet && sheet.kind === 'entry') { sheet.ncColor = Number(t.dataset.color); markSwatches($('#nc-swatches'), sheet.ncColor); }
+        break;
+      case 'nc-save': saveInlineCategory(); break;
+      case 'cs-color':
+        if (sheet && sheet.kind === 'category') { sheet.color = Number(t.dataset.color); markSwatches($('#c-swatches'), sheet.color); updateCategoryPreview(); }
+        break;
+      case 'entry-delete': showEntryDeleteConfirm(true); break;
+      case 'entry-delete-cancel': showEntryDeleteConfirm(false); break;
+      case 'entry-delete-confirm': {
+        const f = sheet;
+        if (!f || f.kind !== 'entry' || !f.id) break;
+        const ok = commit(() => { state.entries = state.entries.filter(x => x.id !== f.id); }, 'Kayıt silindi');
+        if (ok) closeSheet();
+        break;
+      }
+      case 'confirm-ok': {
+        const f = sheet;
+        if (!f || f.kind !== 'confirm') break;
+        if (f.onConfirm()) closeSheet();
+        break;
+      }
+    }
+  });
+
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (el.id === 'f-amount') {
+      const clean = sanitizeAmount(el.value);
+      if (clean !== el.value) el.value = clean;
+      $('#err-amount').hidden = true;
+    } else if (el.id === 'c-name') {
+      $('#c-err').hidden = true;
+      updateCategoryPreview();
+    } else if (el.id === 'nc-name') {
+      $('#nc-err').hidden = true;
+    }
+  });
+
+  document.addEventListener('change', e => {
+    if (e.target.id === 'import-file' && e.target.files && e.target.files[0]) {
+      handleImportFile(e.target.files[0]);
+      e.target.value = '';
+    }
+  });
+
+  document.addEventListener('submit', e => {
+    e.preventDefault();
+    if (e.target.id === 'entry-form') saveEntry();
+    else if (e.target.id === 'cat-form') saveCategory();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!sheet) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeSheet(); return; }
+    if (e.key === 'Enter' && e.target.id === 'nc-name') { e.preventDefault(); saveInlineCategory(); return; }
+    if (e.key === 'Tab') {
+      const items = [...$('#sheet-root').querySelectorAll('button:not([disabled]), input:not([disabled]):not([type="file"]), label.btn')]
+        .filter(el => el.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  // Halka grafikte dilimin üstüne gelince / dokununca ortada o kategoriyi göster
+  document.addEventListener('pointerover', e => {
+    const el = e.target.closest && e.target.closest('[data-slice]');
+    if (el) setDonutFocus(Number(el.dataset.slice));
+  });
+  document.addEventListener('pointerout', e => {
+    const from = e.target.closest && e.target.closest('[data-slice]');
+    if (!from) return;
+    const to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('[data-slice]') : null;
+    if (!to) setDonutFocus(null);
+  });
+  document.addEventListener('focusin', e => {
+    const el = e.target.closest && e.target.closest('[data-slice]');
+    if (el) setDonutFocus(Number(el.dataset.slice));
+  });
+
+  // Aynı uygulama başka bir sekmede değişirse bu sekmeyi de güncelle
+  window.addEventListener('storage', e => {
+    if (e.key !== STORE_KEY || sheet) return;
+    const data = readStore();
+    if (data) { applyData(data); render(); }
+  });
+
+  loadInitial();
+  render();
+
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+})();
+</script>
+</body>
+</html>
