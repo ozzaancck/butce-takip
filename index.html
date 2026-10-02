@@ -46,6 +46,10 @@
   --c4: #e87ba4; --c5: #008300; --c6: #4a3aa7; --c7: #e34948;
   --ci0: #ffffff; --ci1: #0d1712; --ci2: #0d1712; --ci3: #0d1712;
   --ci4: #0d1712; --ci5: #ffffff; --ci6: #ffffff; --ci7: #ffffff;
+  --c8: #9a5b2c; --c9: #6f7f12; --c10: #0590b0; --c11: #8e3a8a;
+  --c12: #56677a; --c13: #1f3f7a; --c14: #8a1f3d; --c15: #a08a3c;
+  --ci8: #ffffff; --ci9: #ffffff; --ci10: #0d1712; --ci11: #ffffff;
+  --ci12: #ffffff; --ci13: #ffffff; --ci14: #ffffff; --ci15: #0d1712;
   --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --tabbar-h: 64px;
@@ -66,6 +70,10 @@
     --c4: #d55181; --c5: #008300; --c6: #9085e9; --c7: #e66767;
     --ci0: #ffffff; --ci1: #0d1712; --ci2: #0d1712; --ci3: #0d1712;
     --ci4: #ffffff; --ci5: #ffffff; --ci6: #0d1712; --ci7: #0d1712;
+    --c8: #c0814f; --c9: #a3b23a; --c10: #2bb3d6; --c11: #c26bbd;
+    --c12: #8b9bac; --c13: #4a6fb5; --c14: #a8384f; --c15: #c9b265;
+    --ci8: #0d1712; --ci9: #0d1712; --ci10: #0d1712; --ci11: #0d1712;
+    --ci12: #0d1712; --ci13: #ffffff; --ci14: #ffffff; --ci15: #0d1712;
     color-scheme: dark;
   }
 }
@@ -188,7 +196,7 @@ h1, h2, h3 { text-wrap: balance; }
 .hero-sub { margin: 8px 0 0; font-size: 13px; color: var(--hero-2); }
 .hero-sub b { color: var(--hero-fg); font-weight: 700; font-variant-numeric: tabular-nums; }
 .hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-.hero-actions .btn { padding: 0 8px; gap: 6px; font-size: clamp(13px, 3.8vw, 15px); white-space: nowrap; }
+.hero-actions .btn { padding: 4px 8px; gap: 6px; font-size: clamp(13px, 3.8vw, 15px); line-height: 1.15; }
 .hero-actions .btn svg { width: 16px; height: 16px; }
 @media (max-width: 370px) { .hero-actions .btn svg { display: none; } }
 
@@ -213,6 +221,9 @@ label.btn { cursor: pointer; }
 /* Ay özeti */
 .month-nav { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
 .month-nav h2 { text-align: center; }
+.period-head { text-align: center; min-width: 0; }
+.period-head .sub { margin: 0; }
+.group-range { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--fg-2); }
 .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0 0; }
 .stats div { text-align: center; min-width: 0; }
 .stats dt { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
@@ -271,6 +282,68 @@ button.row:hover, .row-hit:hover { background: var(--surface-2); }
 }
 .avatar.lg { width: 52px; height: 52px; font-size: 20px; }
 .avatar.income { background: var(--income); color: var(--on-bright); }
+.avatar.transfer { background: var(--surface-2); color: var(--fg-2); font-size: 20px; }
+.transfer-amt { color: var(--fg-2); }
+.hero-lines { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 4px 16px; margin: 10px 0 0; }
+.hero-lines div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; min-width: 0; }
+.hero-lines dt { color: var(--hero-2); }
+.hero-lines dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hero-cards { display: grid; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.16); }
+.hero-card-row { display: grid; gap: 2px; width: 100%; text-align: left; padding: 6px 8px; margin: 0 -8px; border-radius: 10px; color: var(--hero-fg); }
+.hero-card-row:hover { background: rgba(255,255,255,.08); }
+.hc-name { display: inline-flex; align-items: center; gap: 6px; font-weight: 750; }
+.hc-name svg { width: 16px; height: 16px; }
+.hc-vals { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 13px; color: var(--hero-2); }
+.hc-vals b { color: var(--hero-fg); font-variant-numeric: tabular-nums; }
+.hero-sum { margin-top: 4px; grid-template-columns: 1fr; }
+.hero-sum div:last-child dd { font-size: 16px; }
+.hero-lines .neg-line dt, .hero-lines .neg-line dd { color: var(--hero-neg); }
+.hero-note { margin: 2px 0 0; font-size: 12.5px; color: var(--hero-2); }
+.notice-warn { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-left: 4px solid var(--expense); }
+.pending-card { border-color: var(--accent); }
+.pending-list { display: grid; gap: 2px; margin-top: 6px; }
+.pending-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 10px 0; }
+.pending-row + .pending-row { border-top: 1px solid var(--line); }
+.pending-actions { grid-column: 1 / -1; display: flex; gap: 8px; justify-content: flex-end; }
+.btn.sm { min-height: 38px; padding: 0 16px; font-size: 14px; border-radius: 12px; flex: 0 0 auto; }
+.limit-input { font-family: var(--font-body) !important; }
+#c-limit { min-height: 48px; font-size: 16px; padding-right: 40px; }
+.limit-bar { display: block; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
+.limit-bar i { display: block; height: 100%; border-radius: 4px; background: var(--income); }
+.limit-near i { background: var(--expense); }
+.limit-over i { background: var(--danger); }
+.budget-list { display: grid; gap: 4px; margin-top: 8px; }
+.budget-row { display: grid; gap: 2px; width: 100%; text-align: left; padding: 8px; border-radius: 12px; }
+.budget-row:hover { background: var(--surface-2); }
+.budget-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.budget-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.budget-name .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cat); flex: none; }
+.budget-amt { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.budget-state { font-size: 12.5px; color: var(--fg-2); }
+.state-near { color: var(--expense-ink); font-weight: 700; }
+.state-over { color: var(--danger); font-weight: 700; }
+.summary-main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.forecast { margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); font-size: 14px; text-align: center; }
+.forecast b { font-variant-numeric: tabular-nums; }
+.forecast.neg { color: var(--danger); background: var(--surface-2); }
+.compare-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.compare-list li { display: flex; gap: 10px; align-items: baseline; font-size: 14px; }
+.compare-list li span { font-size: 11px; color: var(--muted); width: 12px; flex: none; }
+.compare-list li.up span { color: var(--expense-ink); }
+.compare-list li.down span { color: var(--income-ink); }
+.filters { display: grid; gap: 10px; }
+.search input { min-height: 46px; padding-left: 40px; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c7b72' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 12px center / 18px; }
+.filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.select select { width: 100%; min-height: 44px; padding: 0 12px; font: inherit; font-size: 15px; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.filters .link-btn { justify-self: start; padding-left: 0; }
+.result-sum { margin: 0; font-size: 14px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.notice-backup { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-left: 4px solid var(--accent); }
+.notice-actions { display: flex; align-items: center; flex: none; }
+.method-split { margin: 10px 0 0; font-size: 13px; color: var(--fg-2); text-align: center; }
+.method-split b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.hero-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.hero-link { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); color: var(--hero-fg); font-size: 14px; font-weight: 650; }
+.hero-link svg { width: 16px; height: 16px; }
 .avatar svg { width: 20px; height: 20px; }
 .row-main { flex: 1; min-width: 0; display: grid; }
 .row-title, .row-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -294,6 +367,7 @@ button.row:hover, .row-hit:hover { background: var(--surface-2); }
 }
 .chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
 .chip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cat); }
+.chip-top { font-weight: 800; }
 .chip-add { border-style: dashed; color: var(--accent); }
 
 .notice { margin: 0; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); color: var(--fg-2); font-size: 14px; }
@@ -371,10 +445,13 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); }
 .seg button { min-height: 40px; border-radius: 10px; font-weight: 750; color: var(--fg-2); }
 .seg button[aria-checked="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0, 0, 0, .14); }
+.check { display: flex; align-items: center; gap: 12px; font-weight: 700; cursor: pointer; }
+.check input { width: 22px; height: 22px; min-height: 0; padding: 0; flex: none; accent-color: var(--accent); }
+.check small { display: block; font-weight: 500; font-size: 13px; color: var(--fg-2); }
 .err { color: var(--danger); font-size: 13px; font-weight: 650; }
 .newcat { display: grid; gap: 12px; padding: 14px; border: 1px dashed var(--line); border-radius: 16px; }
-.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
-.swatch { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--cat); color: var(--cat-ink); }
+.swatches { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; justify-items: center; }
+.swatch { width: 100%; max-width: 38px; height: auto; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--cat); color: var(--cat-ink); }
 .swatch svg { width: 20px; height: 20px; opacity: 0; }
 .swatch[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--fg); }
 .swatch[aria-pressed="true"] svg { opacity: 1; }
@@ -382,12 +459,21 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .actions .btn-primary, .actions .btn-danger { flex: 1; }
 .confirm-inline { display: grid; gap: 10px; padding: 12px; border-radius: 14px; background: var(--surface-2); }
 .confirm-inline p { margin: 0; font-weight: 650; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .preview { display: flex; align-items: center; gap: 12px; font-weight: 650; }
 .backup-grid { display: grid; gap: 10px; }
 .facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 14px; }
 .facts dt { color: var(--fg-2); }
 .facts dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 
+.swipe { position: relative; overflow: hidden; }
+.swipe-del { position: absolute; top: 0; right: 0; bottom: 0; width: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: var(--danger); color: var(--surface); font-size: 13px; font-weight: 750; }
+.swipe-del svg { width: 20px; height: 20px; }
+.swipe > .row { position: relative; background: var(--surface); transition: transform .2s ease; touch-action: pan-y; }
+.swipe.dragging > .row { transition: none; }
+#toast { display: flex; align-items: center; gap: 14px; }
+.toast-btn { color: var(--accent-soft); font-weight: 800; padding: 4px 2px; text-decoration: underline; text-underline-offset: 3px; }
+#toast[hidden] { display: none !important; }
 #toast {
   position: fixed; left: 50%; z-index: 30;
   bottom: calc(var(--tabbar-h) + 88px + var(--safe-bottom));
@@ -454,6 +540,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   const NONE = '__none__';
   const STORE_KEY = 'butce-takip:v1';
   const BACKUP_KEY = 'butce-takip:lastBackup';
+  const SNOOZE_KEY = 'butce-takip:backupSnooze';
   const $ = (sel, root = document) => root.querySelector(sel);
 
   // ---------- Biçimlendirme ----------
@@ -534,6 +621,9 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
     download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>',
+    repeat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
+    card: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg>',
+    swap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg>',
     upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>',
   };
 
@@ -543,14 +633,20 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   ];
 
   // ---------- Durum ----------
+  const DATA_VERSION = 2;
+  const COLLECTIONS = ['categories', 'entries', 'transfers', 'cards', 'recurring'];
   const state = {
     storageOk: true,
     entries: [],
     categories: [],
+    transfers: [],
+    cards: [],
+    recurring: [],
     view: 'home',           // home | entries | categories | category
     prevView: 'categories',
-    month: currentMonth(),
+    period: null,          // seçili maaş döneminin anahtarı (null = içinde bulunulan dönem)
     filter: 'all',
+    q: '', range: 'all', from: '', to: '', catFilter: '',
     detailCat: null,
   };
   let sheet = null;
@@ -562,35 +658,131 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
 
-  function toEntry(d) {
+  // ---------- Veri doğrulama (eski ve yeni sürüm kayıtlarını aynı biçime getirir) ----------
+  const PALETTE_SIZE = 16;
+  const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+  const MONTH_RE = /^\d{4}-\d{2}$/;
+  const str = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
+  const idOf = v => (typeof v === 'string' && v ? v.slice(0, 64) : newId());
+  const posInt = v => (Number.isSafeInteger(v) && v > 0 ? v : null);
+  const num = v => (typeof v === 'number' && isFinite(v) ? v : 0);
+  const isSalaryNote = note => /maa[şs]/.test(String(note || '').toLocaleLowerCase(TR));
+  const validMethod = (m, type) => {
+    if (m === 'bank' || m === 'wallet') return m;
+    if (type === 'expense' && typeof m === 'string' && /^card:.{1,64}$/.test(m)) return m;
+    return 'bank';
+  };
+
+  function toEntry(d, fromV1) {
     if (!d || typeof d !== 'object') return null;
     const type = d.type === 'income' || d.type === 'expense' ? d.type : null;
-    const amount = Number.isSafeInteger(d.amount) && d.amount > 0 ? d.amount : null;
-    const day = typeof d.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d.day) ? d.day : null;
+    const amount = posInt(d.amount);
+    const day = typeof d.day === 'string' && DAY_RE.test(d.day) ? d.day : null;
     if (!type || amount === null || !day) return null;
+    const note = str(d.note, 120);
+    const system = d.system === 'cardadj' || d.system === 'walletdiff' ? d.system : null;
+    let method = validMethod(d.method, type);
+    // Kart borcunu azaltan düzeltme, karta yazılmış bir gelir olarak tutulur
+    if (system === 'cardadj' && typeof d.method === 'string' && /^card:.{1,64}$/.test(d.method)) method = d.method;
     return {
-      id: typeof d.id === 'string' && d.id ? d.id.slice(0, 64) : newId(),
-      type, amount, day,
-      categoryId: typeof d.categoryId === 'string' ? d.categoryId.slice(0, 64) : null,
-      note: typeof d.note === 'string' ? d.note.slice(0, 120) : '',
-      createdAt: typeof d.createdAt === 'number' ? d.createdAt : 0,
+      id: idOf(d.id),
+      type, amount, day, note, method, system,
+      categoryId: !system && typeof d.categoryId === 'string' ? d.categoryId.slice(0, 64) : null,
+      isSalary: type === 'income' && !system ? (fromV1 ? isSalaryNote(note) : d.isSalary === true) : false,
+      createdAt: num(d.createdAt),
     };
   }
   function toCategory(d) {
     if (!d || typeof d !== 'object' || typeof d.name !== 'string' || !d.name.trim()) return null;
-    const color = Number.isInteger(d.color) && d.color >= 0 && d.color < 8 ? d.color : 0;
+    const color = Number.isInteger(d.color) && d.color >= 0 && d.color < PALETTE_SIZE ? d.color : 0;
     return {
-      id: typeof d.id === 'string' && d.id ? d.id.slice(0, 64) : newId(),
+      id: idOf(d.id),
       name: d.name.trim().slice(0, 30), color,
-      createdAt: typeof d.createdAt === 'number' ? d.createdAt : 0,
+      limit: posInt(d.limit),
+      createdAt: num(d.createdAt),
+    };
+  }
+  function toTransfer(d) {
+    if (!d || typeof d !== 'object') return null;
+    const kind = ['withdraw', 'deposit', 'cardpay'].includes(d.kind) ? d.kind : null;
+    const amount = posInt(d.amount);
+    const day = typeof d.day === 'string' && DAY_RE.test(d.day) ? d.day : null;
+    if (!kind || amount === null || !day) return null;
+    if (kind === 'cardpay' && (typeof d.cardId !== 'string' || !d.cardId)) return null;
+    return {
+      id: idOf(d.id), kind, amount, day,
+      from: kind === 'cardpay' ? (d.from === 'wallet' ? 'wallet' : 'bank') : null,
+      cardId: kind === 'cardpay' ? d.cardId.slice(0, 64) : null,
+      note: str(d.note, 80),
+      createdAt: num(d.createdAt),
+    };
+  }
+  const clampDay = v => (Number.isInteger(v) && v >= 1 && v <= 31 ? v : null);
+  function toCard(d) {
+    if (!d || typeof d !== 'object' || typeof d.name !== 'string' || !d.name.trim()) return null;
+    const cutDay = clampDay(d.cutDay), dueDay = clampDay(d.dueDay);
+    if (!cutDay || !dueDay) return null;
+    const cutOverrides = {};
+    if (d.cutOverrides && typeof d.cutOverrides === 'object') {
+      for (const [m, v] of Object.entries(d.cutOverrides)) {
+        if (MONTH_RE.test(m) && typeof v === 'string' && DAY_RE.test(v)) cutOverrides[m] = v;
+      }
+    }
+    return { id: idOf(d.id), name: d.name.trim().slice(0, 24), cutDay, dueDay, cutOverrides, archived: d.archived === true, createdAt: num(d.createdAt) };
+  }
+  function toRecurring(d) {
+    if (!d || typeof d !== 'object') return null;
+    const type = d.type === 'income' || d.type === 'expense' ? d.type : null;
+    const amount = posInt(d.amount);
+    const dayOfMonth = clampDay(d.dayOfMonth);
+    if (!type || amount === null || !dayOfMonth) return null;
+    const handled = {};
+    if (d.handled && typeof d.handled === 'object') {
+      for (const [m, v] of Object.entries(d.handled)) if (MONTH_RE.test(m) && (v === 'added' || v === 'skipped')) handled[m] = v;
+    }
+    return {
+      id: idOf(d.id), type, amount, dayOfMonth,
+      categoryId: type === 'expense' && typeof d.categoryId === 'string' ? d.categoryId.slice(0, 64) : null,
+      note: str(d.note, 80),
+      method: validMethod(d.method, type),
+      isSalary: type === 'income' && d.isSalary === true,
+      startMonth: typeof d.startMonth === 'string' && MONTH_RE.test(d.startMonth) ? d.startMonth : currentMonth(),
+      handled,
+      active: d.active !== false,
+      createdAt: num(d.createdAt),
     };
   }
   const byName = (a, b) => a.name.localeCompare(b.name, TR);
   const byDate = (a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : b.createdAt - a.createdAt);
 
+  // Her sürümden veriyi güncel biçime çevirir (eski kayıtlar kaybolmaz)
+  function migrate(data) {
+    const v1 = !data || !Number.isInteger(data.version) || data.version < 2;
+    const list = k => (data && Array.isArray(data[k]) ? data[k] : []);
+    return {
+      version: DATA_VERSION,
+      categories: list('categories').map(toCategory).filter(Boolean),
+      entries: list('entries').map(e => toEntry(e, v1)).filter(Boolean),
+      transfers: list('transfers').map(toTransfer).filter(Boolean),
+      cards: list('cards').map(toCard).filter(Boolean),
+      recurring: list('recurring').map(toRecurring).filter(Boolean),
+    };
+  }
+  function sortAll() {
+    state.categories.sort(byName);
+    state.entries.sort(byDate);
+    state.transfers.sort(byDate);
+    state.cards.sort(byName);
+  }
   function applyData(data) {
-    state.categories = (Array.isArray(data.categories) ? data.categories : []).map(toCategory).filter(Boolean).sort(byName);
-    state.entries = (Array.isArray(data.entries) ? data.entries : []).map(toEntry).filter(Boolean).sort(byDate);
+    const m = migrate(data);
+    for (const k of COLLECTIONS) state[k] = m[k];
+    sortAll();
+  }
+  function snapshot() {
+    const o = { version: DATA_VERSION };
+    for (const k of COLLECTIONS) o[k] = state[k];
+    return o;
   }
 
   // ---------- Telefonda saklama ----------
@@ -604,7 +796,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   }
   function writeStore() {
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify({ version: 1, categories: state.categories, entries: state.entries }));
+      localStorage.setItem(STORE_KEY, JSON.stringify(snapshot()));
       return true;
     } catch (e) {
       return false;
@@ -613,10 +805,9 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   let persistAsked = false;
   // Değişikliği uygula ve kaydet; kaydedilemezse eski haline döndür
   function commit(mutate, okMessage) {
-    const before = JSON.stringify({ categories: state.categories, entries: state.entries });
+    const before = JSON.stringify(snapshot());
     mutate();
-    state.categories.sort(byName);
-    state.entries.sort(byDate);
+    sortAll();
     if (!writeStore()) {
       applyData(JSON.parse(before));
       toast('Kaydedilemedi. Telefonda yer kalmamış olabilir.');
@@ -641,12 +832,17 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     if (data === null) {
       // İlk açılış: hazır kategorileri oluştur
       const now = Date.now();
-      state.categories = DEFAULT_CATEGORIES.map(([id, name], i) => ({ id, name, color: i, createdAt: now })).sort(byName);
-      state.entries = [];
+      state.categories = DEFAULT_CATEGORIES.map(([id, name], i) => ({ id, name, color: i, limit: null, createdAt: now })).sort(byName);
       state.storageOk = writeStore();
       return;
     }
+    const oldVersion = data && data.version;
     applyData(data);
+    // Eski sürümden geldiyse önce eski hali ayrı anahtara yedekle, sonra yeni biçimde kaydet
+    if (oldVersion !== DATA_VERSION) {
+      try { localStorage.setItem(STORE_KEY + ':pre-v' + DATA_VERSION, JSON.stringify(data)); } catch (e) { /* yer yoksa geç */ }
+      state.storageOk = writeStore();
+    }
   }
 
   // ---------- Hesaplar ----------
@@ -659,23 +855,154 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   const catOf = (e, map) => (e.categoryId && map.has(e.categoryId) ? map.get(e.categoryId) : null);
   function totals(list) {
     let inc = 0, exp = 0;
-    for (const e of list) { if (e.type === 'income') inc += e.amount; else exp += e.amount; }
+    for (const e of list) { if (e.type === 'income') inc += e.amount; else if (e.type === 'expense') exp += e.amount; }
     return { inc, exp, net: inc - exp };
   }
-  const monthOf = e => e.day.slice(0, 7);
 
-  function expenseSlices(month, map) {
+  // ---------- Hesaplar: banka, cüzdan, ödeme yöntemleri ----------
+  const SYSTEM_NAMES = { walletdiff: 'Cüzdan farkı', cardadj: 'Kart düzeltmesi' };
+  const TRANSFER_NAMES = { withdraw: 'Para çekme', deposit: 'Bankaya yatırma', cardpay: 'Kart borcu ödemesi' };
+  const cardById = id => state.cards.find(c => c.id === id) || null;
+  const activeCards = () => state.cards.filter(c => !c.archived);
+  function methodName(m) {
+    if (m === 'bank') return 'Banka';
+    if (m === 'wallet') return 'Cüzdan';
+    const c = typeof m === 'string' && m.startsWith('card:') ? cardById(m.slice(5)) : null;
+    return c ? c.name : 'Kart';
+  }
+  function accountBalances() {
+    let bank = 0, wallet = 0;
+    for (const e of state.entries) {
+      const v = e.type === 'income' ? e.amount : -e.amount;
+      if (e.method === 'bank') bank += v;
+      else if (e.method === 'wallet') wallet += v;
+    }
+    for (const t of state.transfers) {
+      if (t.kind === 'withdraw') { bank -= t.amount; wallet += t.amount; }
+      else if (t.kind === 'deposit') { wallet -= t.amount; bank += t.amount; }
+      else if (t.kind === 'cardpay') { if (t.from === 'wallet') wallet -= t.amount; else bank -= t.amount; }
+    }
+    return { bank, wallet, cash: bank + wallet };
+  }
+  // ---------- Kredi kartı ekstreleri ----------
+  const daysInMonth = ym => { const [y, m] = ym.split('-').map(Number); return new Date(y, m, 0).getDate(); };
+  // Kartın verilen aydaki hesap kesim tarihi (elle düzeltildiyse o tarih)
+  const cutDate = (card, ym) => card.cutOverrides[ym] || `${ym}-${pad(Math.min(card.cutDay, daysInMonth(ym)))}`;
+  // Bugüne kadar kesilmiş son ekstrenin tarihi
+  function lastCut(card, ref = today()) {
+    const ym = ref.slice(0, 7);
+    const c = cutDate(card, ym);
+    return c <= ref ? c : cutDate(card, addMonths(ym, -1));
+  }
+  function nextCut(card, ref = today()) {
+    const ym = ref.slice(0, 7);
+    const c = cutDate(card, ym);
+    return c > ref ? c : cutDate(card, addMonths(ym, 1));
+  }
+  // Son ödeme günü kesim gününden büyükse aynı ay, değilse sonraki ay
+  function dueDateFor(card, cut) {
+    const ym = card.dueDay > Number(cut.slice(8)) ? cut.slice(0, 7) : addMonths(cut.slice(0, 7), 1);
+    return `${ym}-${pad(Math.min(card.dueDay, daysInMonth(ym)))}`;
+  }
+  function cardStatus(card) {
+    const m = 'card:' + card.id;
+    const lc = lastCut(card);
+    let through = 0, after = 0, paid = 0, count = 0;
+    for (const e of state.entries) {
+      if (e.method !== m) continue;
+      const v = e.type === 'expense' ? e.amount : -e.amount;
+      if (e.day <= lc) through += v; else after += v;
+      count++;
+    }
+    for (const t of state.transfers) if (t.kind === 'cardpay' && t.cardId === card.id) { paid += t.amount; count++; }
+    const statementDue = Math.max(0, through - paid);
+    const overpay = Math.max(0, paid - through);
+    return {
+      card, lastCut: lc, nextCut: nextCut(card), due: dueDateFor(card, lc),
+      statementDue, newStatement: after - overpay, total: through + after - paid, used: count > 0,
+    };
+  }
+  const cardsUsed = () => state.cards.length > 0;
+
+  // Cüzdan hiç kullanılmadıysa arayüzde gösterilmez
+  const walletUsed = () => state.entries.some(e => e.method === 'wallet') || state.transfers.some(t => t.kind !== 'cardpay' || t.from === 'wallet');
+  function methodOptions(type) {
+    const opts = ['bank', 'wallet'];
+    if (type === 'expense') for (const c of activeCards()) opts.push('card:' + c.id);
+    return opts;
+  }
+  // En sık kullanılan ödeme yöntemi (son 200 kayıt)
+  function preferredMethod(type) {
+    const valid = methodOptions(type);
+    const count = new Map();
+    for (const e of state.entries.slice(0, 200)) {
+      if (e.type !== type || e.system || !valid.includes(e.method)) continue;
+      count.set(e.method, (count.get(e.method) || 0) + 1);
+    }
+    let best = 'bank', n = 0;
+    for (const [m, c] of count) if (c > n) { best = m; n = c; }
+    return best;
+  }
+
+  // ---------- Tarih yardımcıları ----------
+  const parseDay = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const dayStr = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const addDays = (s, n) => { const d = parseDay(s); d.setDate(d.getDate() + n); return dayStr(d); };
+  const utcDay = s => { const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+  const daysBetween = (a, b) => Math.round((utcDay(b) - utcDay(a)) / 86400000);
+  const shortDayFmt = new Intl.DateTimeFormat(TR, { day: 'numeric', month: 'short' });
+  const shortDayYearFmt = new Intl.DateTimeFormat(TR, { day: 'numeric', month: 'short', year: 'numeric' });
+  const longDayFmt = new Intl.DateTimeFormat(TR, { day: 'numeric', month: 'long' });
+  const shortDay = s => (s.slice(0, 4) === today().slice(0, 4) ? shortDayFmt : shortDayYearFmt).format(parseDay(s));
+
+  // ---------- Maaş dönemleri ----------
+  // "Maaş" işaretli her gelir yeni bir dönem başlatır; açık dönemin bitişi yoktur.
+  function getPeriods() {
+    const days = state.entries.map(e => e.day).concat(state.transfers.map(t => t.day));
+    const salaries = [...new Set(state.entries.filter(e => e.isSalary).map(e => e.day))].sort();
+    const earliest = days.length ? days.reduce((a, b) => (a < b ? a : b)) : today();
+    const out = [];
+    if (!salaries.length) {
+      out.push({ key: 'start', start: earliest, end: null, initial: true });
+    } else {
+      if (earliest < salaries[0]) out.push({ key: 'start', start: earliest, end: addDays(salaries[0], -1), initial: true });
+      salaries.forEach((s, i) => out.push({ key: s, start: s, end: i + 1 < salaries.length ? addDays(salaries[i + 1], -1) : null }));
+    }
+    out.forEach((p, i) => { p.index = i; });
+    return out;
+  }
+  const inPeriod = (day, p) => day >= p.start && (p.end === null || day <= p.end);
+  const currentPeriod = periods => periods[periods.length - 1];
+  function selectedPeriod(periods) {
+    return periods.find(p => p.key === state.period) || currentPeriod(periods);
+  }
+  function periodRange(p) {
+    return p.end === null ? `${shortDay(p.start)} – bugün` : p.start === p.end ? shortDay(p.start) : `${shortDay(p.start)} – ${shortDay(p.end)}`;
+  }
+  function periodTitle(p) {
+    if (p.initial) return 'Başlangıç dönemi';
+    return p.end === null ? 'Açık dönem' : `${longDayFmt.format(parseDay(p.start))} dönemi`;
+  }
+  const periodLength = p => daysBetween(p.start, p.end === null ? today() : p.end) + 1;
+  // Bir kaydın hangi döneme düştüğü (gruplama için)
+  function periodOfDay(day, periods) {
+    for (let i = periods.length - 1; i >= 0; i--) if (day >= periods[i].start) return periods[i];
+    return periods[0];
+  }
+
+  function expenseSlices(p, map) {
     const byCat = new Map();
     let total = 0;
     for (const e of state.entries) {
-      if (e.type !== 'expense' || monthOf(e) !== month) continue;
+      if (e.type !== 'expense' || !inPeriod(e.day, p)) continue;
       const c = catOf(e, map);
-      const key = c ? c.id : NONE;
+      const key = e.system ? 'sys:' + e.system : c ? c.id : NONE;
       byCat.set(key, (byCat.get(key) || 0) + e.amount);
       total += e.amount;
     }
     if (!total) return { total: 0, slices: [] };
     let slices = [...byCat].map(([key, amount]) => {
+      if (key.startsWith('sys:')) return { key, name: SYSTEM_NAMES[key.slice(4)], color: 'other', amount, fraction: amount / total, system: true };
       const c = key === NONE ? null : map.get(key);
       return { key, name: c ? c.name : 'Kategorisiz', color: c ? c.color : null, amount, fraction: amount / total };
     }).sort((a, b) => b.amount - a.amount);
@@ -688,56 +1015,265 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     return { total, slices };
   }
 
-  function monthBars(selected) {
-    const cur = currentMonth();
-    const end = selected > addMonths(cur, -6) ? cur : selected;
-    const byMonth = new Map();
-    for (const e of state.entries) {
-      const k = monthOf(e);
-      const t = byMonth.get(k) || { inc: 0, exp: 0 };
-      if (e.type === 'income') t.inc += e.amount; else t.exp += e.amount;
-      byMonth.set(k, t);
+  // Seçili dönem son 6 dönemin içindeyse en güncel 6 dönem, değilse seçili dönemle biten 6 dönem
+  function periodBars(periods, selected) {
+    const last = periods.length - 1;
+    const endIdx = selected.index > last - 6 ? last : selected.index;
+    const list = periods.slice(Math.max(0, endIdx - 5), endIdx + 1);
+    return list.map(p => {
+      const t = totals(state.entries.filter(e => inPeriod(e.day, p)));
+      return { period: p, inc: t.inc, exp: t.exp };
+    });
+  }
+
+  // ---------- Düzenli işlemler ----------
+  const occurrenceDay = (r, ym) => `${ym}-${pad(Math.min(r.dayOfMonth, daysInMonth(ym)))}`;
+  function recurringName(r) {
+    if (r.note) return r.note;
+    if (r.type === 'income') return r.isSalary ? 'Maaş' : 'Gelir';
+    const c = r.categoryId && catMap().get(r.categoryId);
+    return c ? c.name : 'Gider';
+  }
+  // Günü gelmiş ama eklenmemiş/atlanmamış tekrarlar (en fazla son 12 ay)
+  function pendingRecurring() {
+    const t = today(), cur = t.slice(0, 7), out = [];
+    for (const r of state.recurring) {
+      if (!r.active) continue;
+      let ym = r.startMonth < addMonths(cur, -11) ? addMonths(cur, -11) : r.startMonth;
+      for (; ym <= cur; ym = addMonths(ym, 1)) {
+        const day = occurrenceDay(r, ym);
+        if (day <= t && !r.handled[ym]) out.push({ r, ym, day });
+      }
     }
-    const out = [];
-    for (let i = 5; i >= 0; i--) {
-      const m = addMonths(end, -i);
-      const t = byMonth.get(m) || { inc: 0, exp: 0 };
-      out.push({ month: m, inc: t.inc, exp: t.exp });
+    return out.sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
+  }
+  // Tekrarın ilk ayı: günü bu ay henüz gelmediyse bu ay, geçtiyse gelecek ay
+  function firstMonthFor(dayOfMonth) {
+    const t = today(), ym = t.slice(0, 7);
+    return occurrenceDay({ dayOfMonth }, ym) >= t ? ym : addMonths(ym, 1);
+  }
+  function entryFromRecurring(r, day) {
+    let method = r.method;
+    if (method.startsWith('card:')) { const c = cardById(method.slice(5)); if (!c || c.archived) method = 'bank'; }
+    return {
+      id: newId(), type: r.type, amount: r.amount,
+      categoryId: r.type === 'expense' ? r.categoryId : null,
+      note: r.note, isSalary: r.type === 'income' && r.isSalary, method, system: null, day, createdAt: Date.now(),
+    };
+  }
+  function applyRecurring(items, action) {
+    const ids = new Set(items.map(x => x.r.id + '|' + x.ym));
+    return commit(() => {
+      for (const x of items) {
+        if (action === 'added') state.entries.push(entryFromRecurring(x.r, x.day));
+        if (action === 'added' && x.r.isSalary) state.period = null;
+      }
+      state.recurring = state.recurring.map(r => {
+        const h = { ...r.handled };
+        for (const x of items) if (x.r.id === r.id && ids.has(r.id + '|' + x.ym)) h[x.ym] = action;
+        return { ...r, handled: h };
+      });
+    }, action === 'added' ? (items.length > 1 ? `${items.length} düzenli işlem eklendi` : 'Düzenli işlem eklendi') : 'Atlandı');
+  }
+  function recurringCard() {
+    if (!canWrite()) return '';
+    const items = pendingRecurring();
+    if (!items.length) return '';
+    return `<section class="card pending-card">
+      <div class="card-head"><div><h2>Bekleyen düzenli işlemler</h2><p class="sub">Günü gelenleri ekle ya da bu sefer atla</p></div>
+        ${items.length > 1 ? '<button class="link-btn" data-action="rec-add-all">Hepsini ekle</button>' : ''}</div>
+      <div class="pending-list">${items.map(x => `<div class="pending-row">
+        <span class="row-main"><span class="row-title">${esc(recurringName(x.r))}</span><span class="row-sub">${esc(dayName(x.day))} · ${esc(methodName(x.r.method))}</span></span>
+        <span class="row-amt ${x.r.type === 'income' ? 'inc' : 'exp'}">${signed(x.r.amount, x.r.type)}</span>
+        <span class="pending-actions">
+          <button class="btn btn-quiet sm" data-action="rec-skip" data-id="${esc(x.r.id)}" data-month="${x.ym}">Atla</button>
+          <button class="btn btn-primary sm" data-action="rec-add" data-id="${esc(x.r.id)}" data-month="${x.ym}">Ekle</button>
+        </span>
+      </div>`).join('')}</div>
+    </section>`;
+  }
+
+  // ---------- Dönem sonu tahmini ----------
+  // Açık dönem için: şimdiki net + (kalan gün × günlük ortalama gider) + henüz eklenmemiş düzenli işlemler.
+  // Dönem uzunluğu bir önceki dönemin uzunluğu kabul edilir (yoksa 30 gün).
+  function forecast(periods, p) {
+    if (p.end !== null) return null;
+    const elapsed = periodLength(p);
+    if (elapsed < 2) return null;
+    const prev = periods[p.index - 1];
+    const expectedLen = prev && !prev.initial ? periodLength(prev) : 30;
+    const remaining = Math.max(0, expectedLen - elapsed);
+    const endDay = addDays(p.start, Math.max(expectedLen, elapsed) - 1);
+    const pt = totals(state.entries.filter(e => inPeriod(e.day, p)));
+    const avg = pt.exp / elapsed;
+    let recurringNet = 0;
+    for (const r of state.recurring) {
+      if (!r.active || r.isSalary) continue;
+      for (let ym = p.start.slice(0, 7); ym <= endDay.slice(0, 7); ym = addMonths(ym, 1)) {
+        if (ym < r.startMonth || r.handled[ym]) continue;
+        const day = occurrenceDay(r, ym);
+        if (day < p.start || day > endDay) continue;
+        // Günü geçmiş ama eklenmemiş olanlar da (bekleyenler) hesaba katılır
+        recurringNet += r.type === 'income' ? r.amount : -r.amount;
+      }
     }
-    return out;
+    // Tahmin olduğu için tam liraya yuvarlanır
+    const value = Math.round((pt.net - avg * remaining + recurringNet) / 100) * 100;
+    return { value, endDay, remaining };
+  }
+
+  // ---------- Geçen dönemle karşılaştırma ----------
+  function comparison(periods, p) {
+    const prev = periods[p.index - 1];
+    if (!prev) return null;
+    // Açık dönem, geçen dönemin aynı sayıda günüyle karşılaştırılır
+    const open = p.end === null;
+    const span = periodLength(p);
+    const prevEnd = open ? addDays(prev.start, span - 1) : prev.end;
+    const inPrev = d => d >= prev.start && d <= (prevEnd < prev.end ? prevEnd : prev.end);
+    const sum = (filter) => {
+      const by = new Map();
+      let total = 0;
+      for (const e of state.entries) {
+        if (e.type !== 'expense' || !filter(e.day)) continue;
+        total += e.amount;
+        if (e.system) continue;
+        const key = e.categoryId && catMap().has(e.categoryId) ? e.categoryId : NONE;
+        by.set(key, (by.get(key) || 0) + e.amount);
+      }
+      return { total, by };
+    };
+    const cur = sum(d => inPeriod(d, p)), old = sum(inPrev);
+    if (!cur.total && !old.total) return null;
+    const notes = [];
+    const pctText = (a, b) => `%${Math.round(Math.abs(a - b) / b * 100)}`;
+    if (old.total > 0) {
+      const ch = cur.total - old.total;
+      if (Math.abs(ch) / old.total >= 0.05) notes.push({ text: `Toplam gider ${pctText(cur.total, old.total)} ${ch > 0 ? 'arttı' : 'azaldı'} (${ch > 0 ? '+' : '−'}${money(Math.abs(ch))})`, up: ch > 0 });
+      else notes.push({ text: 'Toplam gider hemen hemen aynı', up: null });
+    }
+    // Önemsiz küçük farklar gösterilmez: en az ₺200 ve en az %20 değişim
+    const threshold = Math.max(20000, Math.round(old.total * 0.05));
+    const map = catMap();
+    const keys = new Set([...cur.by.keys(), ...old.by.keys()]);
+    const movers = [];
+    for (const k of keys) {
+      const a = cur.by.get(k) || 0, b = old.by.get(k) || 0, d = a - b;
+      if (Math.abs(d) < threshold) continue;
+      if (b > 0 && Math.abs(d) / b < 0.2) continue;
+      const name = k === NONE ? 'Kategorisiz' : map.get(k).name;
+      const text = b === 0 ? `${name}: bu dönem yeni (${money(a)})` : a === 0 ? `${name}: bu dönem hiç yok (geçen dönem ${money(b)})` : `${name} ${pctText(a, b)} ${d > 0 ? 'arttı' : 'azaldı'} (${d > 0 ? '+' : '−'}${money(Math.abs(d))})`;
+      movers.push({ text, up: d > 0, size: Math.abs(d) });
+    }
+    movers.sort((x, y) => y.size - x.size);
+    return { notes: notes.concat(movers.slice(0, 3)), open };
+  }
+  function comparisonCard(periods, p) {
+    const c = comparison(periods, p);
+    if (!c || !c.notes.length) return '';
+    return `<section class="card">
+      <h2>Geçen dönemle karşılaştırma</h2>
+      <p class="sub">${c.open ? 'Geçen dönemin aynı sayıda günüyle' : 'Bir önceki dönemle'} kıyaslandı</p>
+      <ul class="compare-list">${c.notes.map(n => `<li class="${n.up === true ? 'up' : n.up === false ? 'down' : ''}"><span aria-hidden="true">${n.up === true ? '▲' : n.up === false ? '▼' : '='}</span>${esc(n.text)}</li>`).join('')}</ul>
+    </section>`;
+  }
+
+  // ---------- Bütçe limitleri ----------
+  function limitInfo(limit, spent) {
+    const ratio = spent / limit;
+    const level = ratio > 1 ? 'over' : ratio >= 0.8 ? 'near' : 'ok';
+    const text = level === 'over' ? `Aşıldı: ${money(spent - limit)}` : level === 'near' ? `Sınıra yakın · %${Math.round(ratio * 100)}` : `%${Math.round(ratio * 100)}`;
+    return { ratio, level, text };
+  }
+  function limitBar(limit, spent) {
+    const li = limitInfo(limit, spent);
+    return `<span class="limit-bar limit-${li.level}" role="img" aria-label="${esc(`${money(spent)} / ${money(limit)}, ${li.text}`)}"><i style="width:${Math.min(100, li.ratio * 100).toFixed(1)}%"></i></span>`;
+  }
+  function spentInPeriod(catId, p) {
+    let sum = 0;
+    for (const e of state.entries) if (e.type === 'expense' && !e.system && e.categoryId === catId && inPeriod(e.day, p)) sum += e.amount;
+    return sum;
+  }
+  function budgetCard(p) {
+    const rows = state.categories.filter(c => c.limit).map(c => ({ c, spent: spentInPeriod(c.id, p) }))
+      .sort((a, b) => b.spent / b.c.limit - a.spent / a.c.limit);
+    if (!rows.length) return '';
+    return `<section class="card">
+      <h2>Bütçe durumu</h2>
+      <p class="sub">${esc(periodRange(p))} · limit koyduğun kategoriler</p>
+      <div class="budget-list">${rows.map(({ c, spent }) => {
+        const li = limitInfo(c.limit, spent);
+        return `<button class="budget-row" data-action="open-category" data-id="${esc(c.id)}">
+          <span class="budget-top"><span class="budget-name"><i class="dot" style="${catStyle(c.color)}"></i>${esc(c.name)}</span><span class="budget-amt">${money(spent)} / ${money(c.limit)}</span></span>
+          ${limitBar(c.limit, spent)}
+          <span class="budget-state state-${li.level}">${esc(li.text)}</span>
+        </button>`;
+      }).join('')}</div>
+    </section>`;
   }
 
   // ---------- Parçalar ----------
+  function transferRow(t) {
+    const card = t.kind === 'cardpay' ? cardById(t.cardId) : null;
+    const title = t.kind === 'cardpay' ? `${card ? card.name : 'Kart'} borç ödemesi` : TRANSFER_NAMES[t.kind];
+    const route = t.kind === 'withdraw' ? 'Banka → Cüzdan' : t.kind === 'deposit' ? 'Cüzdan → Banka' : `${methodName(t.from)} → ${card ? card.name : 'Kart'}`;
+    const tags = [route];
+    if (t.note) tags.push(t.note);
+    tags.push(dayName(t.day));
+    return `<button class="row" data-action="open-transfer" data-id="${esc(t.id)}">
+      <span class="avatar transfer" aria-hidden="true">${ICON.swap}</span>
+      <span class="row-main"><span class="row-title">${esc(title)}</span><span class="row-sub">${esc(tags.join(' · '))}</span></span>
+      <span class="row-amt transfer-amt">${money(t.amount)}</span>
+    </button>`;
+  }
+
+  function swipeRow(x, map) {
+    const kind = x.kind ? 'transfer' : 'entry';
+    return `<div class="swipe">
+      <button class="swipe-del" data-action="swipe-delete" data-kind="${kind}" data-id="${esc(x.id)}" tabindex="-1">${ICON.trash}Sil</button>
+      ${entryRow(x, map)}
+    </div>`;
+  }
+
   function entryRow(e, map) {
+    if (e.kind) return transferRow(e);
     const isInc = e.type === 'income';
     const c = catOf(e, map);
-    const title = isInc ? (e.note || 'Gelir') : (c ? c.name : 'Kategorisiz');
-    const sub = !isInc && e.note ? `${e.note} · ${dayName(e.day)}` : dayName(e.day);
-    const avatar = isInc
+    const title = e.system ? SYSTEM_NAMES[e.system] : isInc ? (e.note || (e.isSalary ? 'Maaş' : 'Gelir')) : (c ? c.name : 'Kategorisiz');
+    const tags = [];
+    if (isInc && e.isSalary) tags.push('Maaş · dönem başı');
+    if ((!isInc || e.system) && e.note) tags.push(e.note);
+    if (e.method !== 'bank' || state.cards.length || walletUsed()) tags.push(methodName(e.method));
+    tags.push(dayName(e.day));
+    const avatar = e.system
+      ? `<span class="avatar transfer" aria-hidden="true">±</span>`
+      : isInc
       ? `<span class="avatar income" aria-hidden="true">${ICON.plus}</span>`
       : `<span class="avatar" style="${catStyle(c ? c.color : null)}" aria-hidden="true">${esc(initial(title))}</span>`;
     return `<button class="row" data-action="open-entry" data-id="${esc(e.id)}">
       ${avatar}
-      <span class="row-main"><span class="row-title">${esc(title)}</span><span class="row-sub">${esc(sub)}</span></span>
+      <span class="row-main"><span class="row-title">${esc(title)}</span><span class="row-sub">${esc(tags.join(' · '))}</span></span>
       <span class="row-amt ${isInc ? 'inc' : 'exp'}">${signed(e.amount, e.type)}</span>
     </button>`;
   }
 
+  // Kayıtları maaş dönemlerine göre gruplar (en yeni dönem üstte)
   function groupedList(list, map) {
+    const periods = getPeriods();
     const groups = [];
     let cur = null;
     for (const e of list) {
-      const m = monthOf(e);
-      if (!cur || cur.month !== m) { cur = { month: m, items: [] }; groups.push(cur); }
+      const p = periodOfDay(e.day, periods);
+      if (!cur || cur.period !== p) { cur = { period: p, items: [] }; groups.push(cur); }
       cur.items.push(e);
     }
     return groups.map(g => {
       const t = totals(g.items);
       return `<section class="group">
-        <div class="group-head"><h3>${esc(monthName(g.month))}</h3>
+        <div class="group-head"><h3>${esc(periodTitle(g.period))} <span class="group-range">${esc(periodRange(g.period))}</span></h3>
           <p>${t.inc ? `<span class="inc">+${money(t.inc)}</span>` : ''}${t.exp ? `<span class="exp">−${money(t.exp)}</span>` : ''}</p>
         </div>
-        <div class="card flush list">${g.items.map(e => entryRow(e, map)).join('')}</div>
+        <div class="card flush list">${g.items.map(e => canWrite() ? swipeRow(e, map) : entryRow(e, map)).join('')}</div>
       </section>`;
     }).join('');
   }
@@ -756,27 +1292,16 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   // ---------- Görünümler ----------
   function renderHome() {
     const map = catMap();
-    const all = totals(state.entries);
-    const neg = all.net < 0;
-    let html = statusNotice() + installNotice();
-
-    html += `<section class="hero" aria-label="Bakiye">
-      <p class="hero-label">Güncel bakiye</p>
-      <p class="hero-amount${neg ? ' neg' : ''}">${money(all.net)}</p>
-      ${neg ? '<p class="hero-warn">Harcamaların gelirini aştı</p>' : ''}
-      <p class="hero-sub">Toplam gelir <b>${money(all.inc)}</b> · Toplam gider <b>${money(all.exp)}</b></p>
-      ${canWrite() ? `<div class="hero-actions">
-        <button class="btn btn-income" data-action="add-income">${ICON.plus}Gelir ekle</button>
-        <button class="btn btn-expense" data-action="add-expense">${ICON.minus}Harcama ekle</button>
-      </div>` : ''}
-    </section>`;
+    let html = statusNotice() + installNotice() + backupNotice() + dueNotices();
+    html += heroCard();
+    html += recurringCard();
 
     if (!state.entries.length) {
       html += `<section class="card">
         <h2>Nasıl kullanılır?</h2>
         <ol class="steps">
-          <li><b>Gelir ekle</b> ile maaşını ya da elindeki parayı gir; bakiyen oluşsun.</li>
-          <li>Her harcamanı <b>Harcama ekle</b> ile kategorisini seçerek gir; bakiyenden düşülür.</li>
+          <li><b>Gelir ekle</b> ile maaşını gir ve <b>Maaş</b> kutusunu işaretli bırak; yeni dönemin o gün başlar.</li>
+          <li>Her harcamanı <b>Gider/Harcama ekle</b> ile kategorisini seçerek gir.</li>
           <li>Kendi kategorilerini <b>Kategoriler</b> sekmesinden oluşturabilirsin.</li>
           <li>Kayıt girdikçe burada, paranın nereye gittiğini grafiklerle göreceksin.</li>
         </ol>
@@ -785,46 +1310,54 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       return html;
     }
 
-    const m = state.month;
-    const mt = totals(state.entries.filter(e => monthOf(e) === m));
-    const canNext = m < currentMonth();
+    const periods = getPeriods();
+    const p = selectedPeriod(periods);
+    const pt = totals(state.entries.filter(e => inPeriod(e.day, p)));
+    const hasPrev = p.index > 0, hasNext = p.index < periods.length - 1;
     html += `<section class="card">
       <div class="month-nav">
-        <button class="icon-btn" data-action="month-prev" aria-label="Önceki ay">${ICON.left}</button>
-        <h2>${esc(monthName(m))}</h2>
-        <button class="icon-btn" data-action="month-next" aria-label="Sonraki ay"${canNext ? '' : ' disabled'}>${ICON.right}</button>
+        <button class="icon-btn" data-action="period-prev" aria-label="Önceki dönem"${hasPrev ? '' : ' disabled'}>${ICON.left}</button>
+        <div class="period-head"><h2>${esc(periodTitle(p))}</h2><p class="sub">${esc(periodRange(p))}${p.end === null ? ` · ${periodLength(p)}. gün` : ''}</p></div>
+        <button class="icon-btn" data-action="period-next" aria-label="Sonraki dönem"${hasNext ? '' : ' disabled'}>${ICON.right}</button>
       </div>
       <dl class="stats">
-        <div><dt>Gelir</dt><dd class="inc">+${money(mt.inc)}</dd></div>
-        <div><dt>Gider</dt><dd class="exp">−${money(mt.exp)}</dd></div>
-        <div><dt>Kalan</dt><dd class="${mt.net < 0 ? 'neg' : ''}">${money(mt.net)}</dd></div>
+        <div><dt>Gelir</dt><dd class="inc">+${money(pt.inc)}</dd></div>
+        <div><dt>Gider</dt><dd class="exp">−${money(pt.exp)}</dd></div>
+        <div><dt>Kalan</dt><dd class="${pt.net < 0 ? 'neg' : ''}">${money(pt.net)}</dd></div>
       </dl>
+      ${methodSplit(p)}
+      ${(() => {
+        const f = forecast(periods, p);
+        return f ? `<p class="forecast${f.value < 0 ? ' neg' : ''}">Bu hızla dönem sonunda (≈ ${esc(shortDay(f.endDay))}) yaklaşık <b>${money(f.value)}</b> kalacak</p>` : '';
+      })()}
     </section>`;
+    html += budgetCard(p);
+    html += comparisonCard(periods, p);
 
-    const { total, slices } = expenseSlices(m, map);
+    const { total, slices } = expenseSlices(p, map);
     donutSlices = slices;
     donutTotal = total;
     html += `<section class="card">
       <h2>Paran nereye gitti?</h2>
-      <p class="sub">${esc(monthName(m))} harcamalarının kategorilere dağılımı</p>
-      ${slices.length ? donut(slices, total) : '<p class="empty">Bu ay henüz harcama girilmemiş.</p>'}
+      <p class="sub">${esc(periodRange(p))} harcamalarının kategorilere dağılımı</p>
+      ${slices.length ? donut(slices, total) : '<p class="empty">Bu dönemde henüz harcama girilmemiş.</p>'}
     </section>`;
 
-    const bars = monthBars(m);
+    const bars = periodBars(periods, p);
     const max = Math.max(1, ...bars.map(b => Math.max(b.inc, b.exp)));
-    const sel = bars.find(b => b.month === m);
+    const sel = bars.find(b => b.period === p);
     html += `<section class="card">
-      <h2>Aylık gelir ve gider</h2>
-      <p class="sub">Bir aya dokunarak o ayın detayını görebilirsin</p>
-      <div class="bars" role="group" aria-label="Son 6 ayın gelir ve gideri">
+      <h2>Dönemlere göre gelir ve gider</h2>
+      <p class="sub">Bir döneme dokunarak o dönemin detayını görebilirsin</p>
+      <div class="bars" role="group" aria-label="Son dönemlerin gelir ve gideri">
         ${bars.map(b => {
-          const label = `${monthName(b.month)}: gelir ${money(b.inc)}, gider ${money(b.exp)}`;
-          return `<button class="bar-col${b.month === m ? ' sel' : ''}" data-action="select-month" data-month="${b.month}" aria-label="${esc(label)}" title="${esc(label)}">
+          const label = `${periodRange(b.period)}: gelir ${money(b.inc)}, gider ${money(b.exp)}`;
+          return `<button class="bar-col${b.period === p ? ' sel' : ''}" data-action="select-period" data-period="${esc(b.period.key)}" aria-label="${esc(label)}" title="${esc(label)}">
             <span class="bar-pair">
               <span class="bar b-inc" style="height:${b.inc ? `max(2px, ${(b.inc / max * 100).toFixed(2)}%)` : '0'}"></span>
               <span class="bar b-exp" style="height:${b.exp ? `max(2px, ${(b.exp / max * 100).toFixed(2)}%)` : '0'}"></span>
             </span>
-            <span class="bar-label">${esc(monthShort(b.month))}</span>
+            <span class="bar-label">${esc(b.period.initial ? 'Başl.' : shortDayFmt.format(parseDay(b.period.start)))}</span>
           </button>`;
         }).join('')}
       </div>
@@ -832,14 +1365,98 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
         <span class="legend-inline"><span><i style="background:var(--income)"></i>Gelir</span><span><i style="background:var(--expense)"></i>Gider</span></span>
         <span>Ölçek: en yüksek ${compact(max)}</span>
       </div>
-      ${sel ? `<p class="readout"><b>${esc(monthName(sel.month))}</b> · <span class="inc">+${money(sel.inc)}</span> · <span class="exp">−${money(sel.exp)}</span></p>` : ''}
+      ${sel ? `<p class="readout"><b>${esc(periodRange(sel.period))}</b> · <span class="inc">+${money(sel.inc)}</span> · <span class="exp">−${money(sel.exp)}</span></p>` : ''}
     </section>`;
 
     html += `<section class="card flush">
       <div class="card-head"><div><h2>Son işlemler</h2></div><button class="link-btn" data-action="tab" data-view="entries">Tümünü gör</button></div>
-      <div class="list">${state.entries.slice(0, 5).map(e => entryRow(e, map)).join('')}</div>
+      <div class="list">${state.entries.slice(0, 5).map(e => canWrite() ? swipeRow(e, map) : entryRow(e, map)).join('')}</div>
     </section>`;
     return html;
+  }
+
+  function heroCard() {
+    const b = accountBalances();
+    const wallet = walletUsed();
+    const statuses = activeCards().map(cardStatus).concat(state.cards.filter(c => c.archived).map(cardStatus).filter(st => st.total > 0));
+    const dueTotal = statuses.reduce((sum, st) => sum + st.statementDue, 0);
+    const pendingTotal = statuses.reduce((sum, st) => sum + Math.max(0, st.newStatement), 0);
+    const after = b.cash - dueTotal;
+    const lines = [];
+    if (wallet) lines.push(['Banka', money(b.bank)], ['Cüzdan', money(b.wallet)]);
+    return `<section class="hero" aria-label="Bakiye">
+      <p class="hero-label">Toplam nakit</p>
+      <p class="hero-amount${b.cash < 0 ? ' neg' : ''}">${money(b.cash)}</p>
+      ${b.cash < 0 ? '<p class="hero-warn">Nakit eksiye düştü</p>' : ''}
+      ${lines.length ? `<dl class="hero-lines">${lines.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : ''}
+      ${statuses.length ? `<div class="hero-cards">
+        ${statuses.map(st => `<button class="hero-card-row" data-action="open-card" data-id="${esc(st.card.id)}">
+          <span class="hc-name">${ICON.card}${esc(st.card.name)}</span>
+          <span class="hc-vals"><span>Kesilen <b>${money(st.statementDue)}</b>${st.statementDue ? ` · son ödeme ${esc(shortDay(st.due))}` : ''}</span><span>Yeni ekstre <b>${money(Math.max(0, st.newStatement))}</b></span></span>
+        </button>`).join('')}
+        <dl class="hero-lines hero-sum">
+          <div><dt>Ödenecek ekstreler</dt><dd>${money(dueTotal)}</dd></div>
+          <div class="${after < 0 ? 'neg-line' : ''}"><dt>Borç ödenince kalacak</dt><dd>${money(after)}</dd></div>
+        </dl>
+        ${after < 0 ? '<p class="hero-warn">Nakdin kesilen ekstreleri ödemeye yetmiyor</p>' : ''}
+        ${pendingTotal ? `<p class="hero-note">Henüz kesilmemiş kart harcamaları: ${money(pendingTotal)} (sonraki ekstrelere yazılacak)</p>` : ''}
+      </div>` : ''}
+      ${canWrite() ? `<div class="hero-actions">
+        <button class="btn btn-income" data-action="add-income">${ICON.plus}Gelir ekle</button>
+        <button class="btn btn-expense" data-action="add-expense">${ICON.minus}Gider/Harcama ekle</button>
+      </div>
+      <div class="hero-links">
+        <button class="hero-link" data-action="transfer-new">${ICON.swap}Para çek / yatır</button>
+        ${activeCards().length ? `<button class="hero-link" data-action="card-pay">${ICON.card}Kart borcu öde</button>` : ''}
+        ${wallet ? `<button class="hero-link" data-action="wallet-count">Cüzdanı say</button>` : ''}
+      </div>` : ''}
+    </section>`;
+  }
+
+  // Dönemdeki giderlerin ödeme yöntemine göre dağılımı (birden fazla yöntem varsa)
+  function methodSplit(p) {
+    const by = new Map();
+    for (const e of state.entries) {
+      if (e.type !== 'expense' || !inPeriod(e.day, p)) continue;
+      by.set(e.method, (by.get(e.method) || 0) + e.amount);
+    }
+    if (by.size < 2) return '';
+    const parts = [...by].sort((a, b) => b[1] - a[1]).map(([m, v]) => `${esc(methodName(m))} <b>${money(v)}</b>`);
+    return `<p class="method-split">Giderler: ${parts.join(' · ')}</p>`;
+  }
+
+  // 30 gündür (ya da hiç) yedek alınmadıysa hatırlat; kapatılırsa 7 gün sonra tekrar
+  function backupNotice() {
+    if (!canWrite()) return '';
+    let last = 0, snooze = 0;
+    try { last = Number(localStorage.getItem(BACKUP_KEY)) || 0; snooze = Number(localStorage.getItem(SNOOZE_KEY)) || 0; } catch (e) { return ''; }
+    const now = Date.now(), DAY = 86400000;
+    if (snooze > now) return '';
+    const records = state.entries.length + state.transfers.length;
+    let text;
+    if (last) {
+      const days = Math.floor((now - last) / DAY);
+      if (days < 30) return '';
+      text = `${days} gündür yedek almadın.`;
+    } else {
+      if (records < 10) return '';
+      text = 'Henüz hiç yedek almadın.';
+    }
+    return `<div class="notice notice-backup"><span><b>${text}</b> Kayıtların sadece bu telefonda duruyor.</span>
+      <span class="notice-actions"><button class="link-btn" data-action="backup">Şimdi yedekle</button>
+      <button class="icon-btn" data-action="backup-snooze" aria-label="Hatırlatmayı kapat">${ICON.close}</button></span></div>`;
+  }
+
+  // Son ödeme günü yaklaşan (3 gün kala) ya da geçen ekstreler
+  function dueNotices() {
+    const t = today();
+    return state.cards.map(cardStatus).filter(st => st.statementDue > 0).map(st => {
+      const left = daysBetween(t, st.due);
+      if (left > 3) return '';
+      const when = left < 0 ? `son ödeme günü geçti (${shortDay(st.due)})` : left === 0 ? 'son ödeme günü bugün' : `son ödeme günü ${left} gün sonra (${shortDay(st.due)})`;
+      return `<div class="notice notice-warn"><span><b>${esc(st.card.name)}</b> ekstresi: ${money(st.statementDue)}, ${when}.</span>
+        ${canWrite() ? `<button class="link-btn" data-action="card-pay" data-id="${esc(st.card.id)}">Öde</button>` : ''}</div>`;
+    }).join('');
   }
 
   function donut(slices, total) {
@@ -857,7 +1474,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     }).join('');
     const legend = slices.map((s, i) => {
       const inner = `<i class="dot"></i><span class="legend-name">${esc(s.name)}</span><span class="legend-pct">${pctFmt.format(s.fraction)}</span><span class="legend-amt">${money(s.amount)}</span>`;
-      return s.folded
+      return s.folded || s.system
         ? `<div class="legend-row" data-slice="${i}" style="${catStyle(s.color)}">${inner}</div>`
         : `<button class="legend-row" data-slice="${i}" data-action="open-category" data-id="${esc(s.key)}" style="${catStyle(s.color)}">${inner}</button>`;
     }).join('');
@@ -877,29 +1494,108 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     document.querySelectorAll('[data-slice]').forEach(el => el.classList.toggle('active', s !== null && Number(el.dataset.slice) === i));
   }
 
-  function renderEntries() {
-    const map = catMap();
-    const list = state.filter === 'all' ? state.entries : state.entries.filter(e => e.type === state.filter);
-    const chip = (key, label) => `<button class="chip" data-action="filter" data-filter="${key}" aria-pressed="${state.filter === key}">${label}</button>`;
-    let html = statusNotice();
-    html += `<div class="chips">${chip('all', 'Tümü')}${chip('income', 'Gelirler')}${chip('expense', 'Giderler')}</div>`;
-    if (!list.length) {
-      html += `<p class="empty">${state.entries.length ? 'Bu filtrede işlem yok.' : 'Henüz hiç işlem yok. Sağ alttaki Ekle ile ilk kaydını gir.'}</p>`;
-    } else {
-      html += groupedList(list, map);
+  // Gelir/gider kayıtları ve transferler tarih sırasıyla tek listede
+  const allItems = () => state.entries.concat(state.transfers).sort(byDate);
+
+  // ---------- Arama ve filtre ----------
+  const RANGES = [
+    ['all', 'Tüm zamanlar'], ['period', 'Bu dönem'], ['prevperiod', 'Geçen dönem'], ['month', 'Bu ay'],
+    ['prevmonth', 'Geçen ay'], ['3months', 'Son 3 ay'], ['year', 'Bu yıl'], ['custom', 'Özel aralık'],
+  ];
+  function rangeBounds() {
+    const t = today(), ym = t.slice(0, 7);
+    switch (state.range) {
+      case 'period': { const p = currentPeriod(getPeriods()); return [p.start, null]; }
+      case 'prevperiod': { const ps = getPeriods(); const p = ps[ps.length - 2]; return p ? [p.start, p.end] : ['9999-12-31', null]; }
+      case 'month': return [ym + '-01', null];
+      case 'prevmonth': { const m = addMonths(ym, -1); return [m + '-01', `${m}-${pad(daysInMonth(m))}`]; }
+      case '3months': return [addDays(t, -90), null];
+      case 'year': return [t.slice(0, 4) + '-01-01', null];
+      case 'custom': return [state.from || '0000-01-01', state.to || null];
+      default: return [null, null];
     }
+  }
+  const normalize = v => String(v || '').toLocaleLowerCase(TR);
+  function itemText(x, map) {
+    if (x.kind) {
+      const card = x.kind === 'cardpay' ? cardById(x.cardId) : null;
+      return [TRANSFER_NAMES[x.kind], card && card.name, x.note, 'transfer'].join(' ');
+    }
+    const c = catOf(x, map);
+    return [x.note, c ? c.name : x.type === 'expense' && !x.system ? 'Kategorisiz' : '', x.system && SYSTEM_NAMES[x.system],
+      methodName(x.method), x.type === 'income' ? 'gelir' : 'gider', x.isSalary ? 'maaş' : ''].join(' ');
+  }
+  function filteredItems() {
+    const map = catMap();
+    const [from, to] = rangeBounds();
+    const q = normalize(state.q).trim();
+    const qAmount = /^[\d.,]+$/.test(q) ? q.replace(/\./g, '').replace(/,$/, '') : null;
+    return allItems().filter(x => {
+      if (state.filter === 'transfer' ? !x.kind : state.filter !== 'all' && x.type !== state.filter) return false;
+      if (from && x.day < from) return false;
+      if (to && x.day > to) return false;
+      if (state.catFilter) {
+        if (x.kind || x.type !== 'expense' || x.system) return false;
+        const c = catOf(x, map);
+        if (state.catFilter === NONE ? c : !c || c.id !== state.catFilter) return false;
+      }
+      if (q) {
+        const amountHit = qAmount !== null && amountToInput(x.amount).startsWith(qAmount);
+        if (!amountHit && !normalize(itemText(x, map)).includes(q)) return false;
+      }
+      return true;
+    });
+  }
+  function entriesResults() {
+    const list = filteredItems();
+    const any = allItems().length;
+    if (!list.length) {
+      return `<p class="empty">${any ? 'Bu aramaya / filtreye uyan kayıt yok.' : 'Henüz hiç işlem yok. Sağ alttaki Ekle ile ilk kaydını gir.'}</p>`;
+    }
+    const t = totals(list);
+    const tr = list.filter(x => x.kind).length;
+    return `<p class="result-sum"><b>${list.length}</b> kayıt${t.inc ? ` · <span class="inc">+${money(t.inc)}</span>` : ''}${t.exp ? ` · <span class="exp">−${money(t.exp)}</span>` : ''}${tr ? ` · ${tr} transfer` : ''}</p>` + groupedList(list, catMap());
+  }
+  const filtersActive = () => !!(state.q || state.range !== 'all' || state.catFilter);
+
+  function renderEntries() {
+    const chip = (key, label) => `<button class="chip" data-action="filter" data-filter="${key}" aria-pressed="${state.filter === key}">${label}</button>`;
+    const catOpts = [['', 'Tüm kategoriler']].concat(state.categories.map(c => [c.id, c.name]), [[NONE, 'Kategorisiz']]);
+    let html = statusNotice();
+    html += `<div class="filters">
+      <label class="search"><span class="visually-hidden">Ara</span>
+        <input type="search" id="q" placeholder="Ara: not, kategori, tutar…" autocomplete="off" value="${esc(state.q)}">
+      </label>
+      <div class="chips">${chip('all', 'Tümü')}${chip('income', 'Gelirler')}${chip('expense', 'Giderler')}${state.transfers.length ? chip('transfer', 'Transferler') : ''}</div>
+      <div class="filter-row">
+        <label class="select"><span class="visually-hidden">Tarih aralığı</span><select id="range">${RANGES.map(([k, l]) => `<option value="${k}"${k === state.range ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+        <label class="select"><span class="visually-hidden">Kategori</span><select id="catf">${catOpts.map(([k, l]) => `<option value="${esc(k)}"${k === state.catFilter ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>
+      </div>
+      <div class="filter-row" id="custom-range"${state.range === 'custom' ? '' : ' hidden'}>
+        <label class="field"><span>Başlangıç</span><input type="date" id="from" value="${esc(state.from)}"></label>
+        <label class="field"><span>Bitiş</span><input type="date" id="to" value="${esc(state.to)}"></label>
+      </div>
+      ${filtersActive() ? '<button class="link-btn" data-action="clear-filters">Filtreleri temizle</button>' : ''}
+    </div>
+    <div id="entries-results">${entriesResults()}</div>`;
     return html;
   }
+  // Arama yazılırken sadece sonuçlar yenilenir (klavye kapanmasın)
+  function refreshResults() {
+    const box = $('#entries-results');
+    if (box) box.innerHTML = entriesResults();
+  }
 
+  // Kategori başına: içinde bulunulan (açık) dönemdeki toplam ve tüm zamanlardaki harcama adedi
   function categoryStats(map) {
-    const cur = currentMonth();
+    const cur = currentPeriod(getPeriods());
     const stats = new Map();
     for (const e of state.entries) {
-      if (e.type !== 'expense') continue;
+      if (e.type !== 'expense' || e.system) continue;
       const c = catOf(e, map);
       const key = c ? c.id : NONE;
-      const s = stats.get(key) || { month: 0, count: 0 };
-      if (monthOf(e) === cur) s.month += e.amount;
+      const s = stats.get(key) || { period: 0, count: 0 };
+      if (inPeriod(e.day, cur)) s.period += e.amount;
       s.count += 1;
       stats.set(key, s);
     }
@@ -913,11 +1609,11 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     html += '<p class="hint">Harcamalarını sınıflandırmak için kendi kategorilerini oluştur. Bir kategoriye dokunarak içindeki harcamaları görebilirsin.</p>';
     if (canWrite()) html += `<button class="btn btn-primary btn-block" data-action="new-category">${ICON.plus}Yeni kategori</button>`;
     const rows = state.categories.map(c => {
-      const s = stats.get(c.id) || { month: 0, count: 0 };
+      const s = stats.get(c.id) || { period: 0, count: 0 };
       return `<div class="cat-row">
         <button class="row-hit" data-action="open-category" data-id="${esc(c.id)}">
           <span class="avatar" style="${catStyle(c.color)}" aria-hidden="true">${esc(initial(c.name))}</span>
-          <span class="row-main"><span class="row-title">${esc(c.name)}</span><span class="row-sub">Bu ay ${money(s.month)} · ${s.count} harcama</span></span>
+          <span class="row-main"><span class="row-title">${esc(c.name)}</span><span class="row-sub">${c.limit ? `Bu dönem ${money(s.period)} / ${money(c.limit)} · ${esc(limitInfo(c.limit, s.period).text)}` : `Bu dönem ${money(s.period)} · ${s.count} harcama`}</span>${c.limit ? limitBar(c.limit, s.period) : ''}</span>
         </button>
         ${canWrite() ? `<button class="icon-btn" data-action="edit-category" data-id="${esc(c.id)}" aria-label="${esc(c.name)} kategorisini düzenle">${ICON.edit}</button>
         <button class="icon-btn" data-action="delete-category" data-id="${esc(c.id)}" aria-label="${esc(c.name)} kategorisini sil">${ICON.trash}</button>` : ''}
@@ -928,14 +1624,50 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       rows.push(`<div class="cat-row">
         <button class="row-hit" data-action="open-category" data-id="${NONE}">
           <span class="avatar" style="${catStyle(null)}" aria-hidden="true">K</span>
-          <span class="row-main"><span class="row-title">Kategorisiz</span><span class="row-sub">Bu ay ${money(none.month)} · ${none.count} harcama · silinen kategorilerden kalanlar</span></span>
+          <span class="row-main"><span class="row-title">Kategorisiz</span><span class="row-sub">Bu dönem ${money(none.period)} · ${none.count} harcama · silinen kategorilerden kalanlar</span></span>
         </button>
       </div>`);
     }
     html += rows.length
       ? `<div class="card flush list">${rows.join('')}</div>`
       : '<p class="empty">Henüz kategori yok.</p>';
+    html += cardsSection();
+    html += recurringSection();
     return html;
+  }
+
+  function recurringSection() {
+    let html = `<section class="group" style="margin-top:8px">
+      <div class="group-head"><h3>Düzenli işlemler</h3></div>
+      <p class="hint">Maaş, kira, fatura, abonelik gibi her ay tekrarlananları bir kez tanımla; günü gelince ana sayfada eklemek için sorulur.</p>`;
+    if (state.recurring.length) {
+      html += `<div class="card flush list">${state.recurring.slice().sort((a, b) => a.dayOfMonth - b.dayOfMonth).map(r => `
+        <button class="row" data-action="rec-edit" data-id="${esc(r.id)}">
+          <span class="avatar ${r.type === 'income' ? 'income' : 'transfer'}" aria-hidden="true">${ICON.repeat}</span>
+          <span class="row-main"><span class="row-title">${esc(recurringName(r))}${r.active ? '' : ' (durduruldu)'}</span><span class="row-sub">Her ayın ${r.dayOfMonth}. günü · ${esc(methodName(r.method))}${r.isSalary ? ' · maaş' : ''}</span></span>
+          <span class="row-amt ${r.type === 'income' ? 'inc' : 'exp'}">${signed(r.amount, r.type)}</span>
+        </button>`).join('')}</div>`;
+    }
+    if (canWrite()) html += `<button class="btn btn-quiet btn-block" data-action="rec-new">${ICON.plus}Düzenli işlem ekle</button>`;
+    return html + '</section>';
+  }
+
+  function cardsSection() {
+    let html = `<section class="group" style="margin-top:8px">
+      <div class="group-head"><h3>Kredi kartları</h3></div>
+      <p class="hint">Kartla yaptığın harcamalar grafiklerde görünür ama nakdinden düşmez; borç olarak izlenir. Kesim gününe göre ekstreler ayrı hesaplanır.</p>`;
+    const cards = activeCards();
+    if (cards.length) {
+      html += `<div class="card flush list">${cards.map(c => {
+        const st = cardStatus(c);
+        return `<button class="row" data-action="open-card" data-id="${esc(c.id)}">
+          <span class="avatar transfer" aria-hidden="true">${ICON.card}</span>
+          <span class="row-main"><span class="row-title">${esc(c.name)}</span><span class="row-sub">Kesim ${c.cutDay} · son ödeme ${c.dueDay} · borç ${money(Math.max(0, st.total))}</span></span>
+        </button>`;
+      }).join('')}</div>`;
+    }
+    if (canWrite()) html += `<button class="btn btn-quiet btn-block" data-action="card-new">${ICON.plus}Kart ekle</button>`;
+    return html + '</section>';
   }
 
   function detailInfo() {
@@ -950,16 +1682,18 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     const { map, id, cat, name } = detailInfo();
     if (id !== NONE && !cat) return '<p class="empty">Bu kategori silinmiş.</p>';
     const list = state.entries.filter(e => {
-      if (e.type !== 'expense') return false;
+      if (e.type !== 'expense' || e.system) return false;
       const c = catOf(e, map);
       return id === NONE ? !c : c && c.id === id;
     });
-    const cur = currentMonth();
-    const monthSum = list.filter(e => monthOf(e) === cur).reduce((s, e) => s + e.amount, 0);
+    const cur = currentPeriod(getPeriods());
+    const periodSum = list.filter(e => inPeriod(e.day, cur)).reduce((s, e) => s + e.amount, 0);
     const total = list.reduce((s, e) => s + e.amount, 0);
     let html = `<section class="card summary">
       <span class="avatar lg" style="${catStyle(cat ? cat.color : null)}" aria-hidden="true">${esc(initial(name))}</span>
-      <div><p class="big exp">Bu ay ${money(monthSum)}</p><p class="small">Toplam ${money(total)} · ${list.length} harcama</p></div>
+      <div class="summary-main"><p class="big exp">Bu dönem ${money(periodSum)}</p>
+        ${cat && cat.limit ? `<p class="small">Limit ${money(cat.limit)} · ${esc(limitInfo(cat.limit, periodSum).text)}</p>${limitBar(cat.limit, periodSum)}` : ''}
+        <p class="small">Toplam ${money(total)} · ${list.length} harcama</p></div>
     </section>`;
     html += list.length ? groupedList(list, map) : '<p class="empty">Bu kategoride henüz harcama yok.</p>';
     return html;
@@ -983,7 +1717,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     const fab = $('#fab');
     const detail = v === 'category' ? detailInfo() : null;
     fab.hidden = !canWrite() || !(v === 'entries' || (detail && detail.cat));
-    $('#fab-label').textContent = v === 'category' ? 'Harcama ekle' : 'Ekle';
+    $('#fab-label').textContent = v === 'category' ? 'Gider/Harcama ekle' : 'Ekle';
   }
 
   function go(view) {
@@ -995,12 +1729,27 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   }
 
   let toastTimer = 0;
-  function toast(msg) {
+  let toastAction = null;
+  function toast(msg, action = null) {
     const el = $('#toast');
-    el.textContent = msg;
+    toastAction = action;
+    el.innerHTML = `<span>${esc(msg)}</span>${action ? `<button type="button" class="toast-btn" data-action="toast-action">${esc(action.label)}</button>` : ''}`;
     el.hidden = false;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.hidden = true; }, 3200);
+    toastTimer = setTimeout(() => { el.hidden = true; toastAction = null; }, action ? action.ms || 5000 : 3200);
+  }
+
+  // Kaydı siler ve birkaç saniye "Geri al" imkânı verir
+  function deleteWithUndo(kind, id) {
+    const coll = kind === 'transfer' ? 'transfers' : 'entries';
+    const item = state[coll].find(x => x.id === id);
+    if (!item) return false;
+    if (!commit(() => { state[coll] = state[coll].filter(x => x.id !== id); })) return false;
+    toast(kind === 'transfer' ? 'Transfer silindi' : 'Kayıt silindi', {
+      label: 'Geri al', ms: 5000,
+      run: () => { if (!state[coll].some(x => x.id === id)) commit(() => { state[coll].push(item); }, 'Geri alındı'); },
+    });
+    return true;
   }
 
   function nameError(name, exceptId) {
@@ -1011,11 +1760,11 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   }
   function suggestColor() {
     const used = new Set(state.categories.map(c => c.color));
-    for (let i = 0; i < 8; i++) if (!used.has(i)) return i;
-    return state.categories.length % 8;
+    for (let i = 0; i < PALETTE_SIZE; i++) if (!used.has(i)) return i;
+    return state.categories.length % PALETTE_SIZE;
   }
   function swatches(selected, action) {
-    return Array.from({ length: 8 }, (_, i) =>
+    return Array.from({ length: PALETTE_SIZE }, (_, i) =>
       `<button type="button" class="swatch" data-action="${action}" data-color="${i}" aria-pressed="${i === selected}" aria-label="Renk ${i + 1}" style="${catStyle(i)}">${ICON.check}</button>`
     ).join('');
   }
@@ -1054,6 +1803,8 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       id: existing ? existing.id : null,
       type: existing ? existing.type : type,
       categoryId: existing ? existing.categoryId : categoryId,
+      method: existing ? existing.method : preferredMethod(existing ? existing.type : type),
+      system: existing ? existing.system : null,
       createdAt: existing ? existing.createdAt : 0,
       ncColor: suggestColor(),
     };
@@ -1061,8 +1812,9 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       <form class="form" id="entry-form" novalidate>
         <div class="seg" role="radiogroup" aria-label="Kayıt türü">
           <button type="button" role="radio" data-action="form-type" data-type="income">Gelir</button>
-          <button type="button" role="radio" data-action="form-type" data-type="expense">Harcama</button>
+          <button type="button" role="radio" data-action="form-type" data-type="expense">Gider/Harcama</button>
         </div>
+        <div class="field" id="recent-section" hidden><span class="field-label">Son kullanılanlar</span><div class="chips" id="f-recent"></div></div>
         <label class="field"><span>Tutar</span>
           <span class="amount-wrap"><input id="f-amount" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-describedby="err-amount"><span class="suffix">₺</span></span>
           <small class="err" id="err-amount" hidden>Geçerli bir tutar gir (ör. 250 ya da 99,90).</small>
@@ -1078,7 +1830,9 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
           </div>
           <small class="err" id="err-cat" hidden>Harcamanın hangi kategoriye ait olduğunu seç.</small>
         </div>
+        <div class="field" id="method-section"><span class="field-label" id="method-label">Nasıl ödendi?</span><div class="chips" id="f-methods"></div></div>
         <label class="field"><span id="note-label">Not (isteğe bağlı)</span><input id="f-note" maxlength="80" autocomplete="off"></label>
+        <label class="check" id="salary-row"><input type="checkbox" id="f-salary"><span>Maaş <small>Bu gelir yeni dönemi başlatır</small></span></label>
         <label class="field"><span>Tarih</span><input id="f-day" type="date" required aria-describedby="err-day"><small class="err" id="err-day" hidden>Bir tarih seç.</small></label>
         <div id="entry-actions" class="actions">
           ${existing ? `<button type="button" class="btn btn-outline-danger" data-action="entry-delete">${ICON.trash}Sil</button>` : ''}
@@ -1088,6 +1842,8 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     openSheet(html, ctx);
     $('#f-amount').value = existing ? amountToInput(existing.amount) : '';
     $('#f-note').value = existing ? existing.note : '';
+    $('#f-salary').checked = existing ? existing.isSalary : false;
+    ctx.salaryTouched = !!existing;
     $('#f-day').value = existing ? existing.day : today();
     applyEntryType();
     renderChips();
@@ -1099,16 +1855,70 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     if (!sheet || sheet.kind !== 'entry') return;
     const inc = sheet.type === 'income';
     document.querySelectorAll('.seg [data-type]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.type === sheet.type)));
-    $('#cat-section').hidden = inc;
+    $('#cat-section').hidden = inc || !!sheet.system;
+    $('#salary-row').hidden = !inc || !!sheet.system;
+    // Cüzdan farkı / kart düzeltmesi: tür ve ödeme yöntemi değiştirilemez
+    $('#entry-form .seg').hidden = !!sheet.system;
+    $('#method-section').hidden = !!sheet.system;
+    if (sheet.system) $('#sheet-title').textContent = SYSTEM_NAMES[sheet.system];
+    if (!sheet.system && !methodOptions(sheet.type).includes(sheet.method) && !(sheet.id && sheet.method.startsWith('card:') && sheet.type === 'expense')) sheet.method = preferredMethod(sheet.type);
+    $('#method-label').textContent = inc ? 'Hangi hesaba geldi?' : 'Nasıl ödendi?';
+    renderMethods();
+    renderRecent();
     $('#note-label').textContent = inc ? 'Açıklama (ör. Maaş, Kira geliri)' : 'Not (isteğe bağlı)';
-    if (!sheet.id) $('#sheet-title').textContent = inc ? 'Gelir ekle' : 'Harcama ekle';
+    if (!sheet.id) $('#sheet-title').textContent = inc ? 'Gelir ekle' : 'Gider/Harcama ekle';
+  }
+
+  function renderMethods() {
+    const wrap = $('#f-methods');
+    if (!wrap || !sheet || sheet.kind !== 'entry') return;
+    const opts = methodOptions(sheet.type);
+    // Düzenlenen kaydın kartı arşivlendiyse yine de seçili görünsün
+    if (!opts.includes(sheet.method)) opts.push(sheet.method);
+    wrap.innerHTML = opts.map(m =>
+      `<button type="button" class="chip" data-action="pick-method" data-method="${esc(m)}" aria-pressed="${m === sheet.method}">${esc(methodName(m))}</button>`
+    ).join('');
+  }
+
+  // Son kullanılan "kategori + tutar" ikilileri (en fazla 5, tekrarsız)
+  function recentPairs() {
+    const map = catMap(), seen = new Set(), out = [];
+    for (const e of state.entries) {
+      if (e.type !== 'expense' || e.system || !e.categoryId || !map.has(e.categoryId)) continue;
+      const k = e.categoryId + '|' + e.amount;
+      if (seen.has(k)) continue;
+      seen.add(k);
+      out.push(e);
+      if (out.length === 5) break;
+    }
+    return out;
+  }
+  // Son 90 günde en sık kullanılan 4 kategori önce gelir
+  function categoriesByUse() {
+    const since = addDays(today(), -90), count = new Map();
+    for (const e of state.entries) if (e.type === 'expense' && !e.system && e.categoryId && e.day >= since) count.set(e.categoryId, (count.get(e.categoryId) || 0) + 1);
+    const top = [...count].sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]);
+    const topCats = top.map(id => state.categories.find(c => c.id === id)).filter(Boolean);
+    return { top: new Set(top), list: topCats.concat(state.categories.filter(c => !top.includes(c.id))) };
+  }
+  function renderRecent() {
+    const sec = $('#recent-section');
+    if (!sec || !sheet || sheet.kind !== 'entry') return;
+    const pairs = sheet.id || sheet.type !== 'expense' ? [] : recentPairs();
+    sec.hidden = !pairs.length;
+    const map = catMap();
+    $('#f-recent').innerHTML = pairs.map(e => {
+      const c = map.get(e.categoryId);
+      return `<button type="button" class="chip" data-action="quick-fill" data-id="${esc(e.id)}" style="${catStyle(c.color)}"><i class="dot"></i>${esc(c.name)} ${money(e.amount)}</button>`;
+    }).join('');
   }
 
   function renderChips() {
     const wrap = $('#f-chips');
     if (!wrap || !sheet || sheet.kind !== 'entry') return;
-    const chips = state.categories.map(c =>
-      `<button type="button" class="chip" data-action="pick-cat" data-id="${esc(c.id)}" aria-pressed="${c.id === sheet.categoryId}" style="${catStyle(c.color)}"><i class="dot"></i>${esc(c.name)}</button>`
+    const { top, list } = categoriesByUse();
+    const chips = list.map(c =>
+      `<button type="button" class="chip${top.has(c.id) ? ' chip-top' : ''}" data-action="pick-cat" data-id="${esc(c.id)}" aria-pressed="${c.id === sheet.categoryId}" style="${catStyle(c.color)}"><i class="dot"></i>${esc(c.name)}</button>`
     );
     chips.push(`<button type="button" class="chip chip-add" data-action="nc-open">+ Yeni kategori</button>`);
     wrap.innerHTML = chips.join('');
@@ -1119,7 +1929,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     if (!f || f.kind !== 'entry') return;
     const amount = parseAmount($('#f-amount').value);
     const day = $('#f-day').value;
-    const catOk = f.type === 'income' || state.categories.some(c => c.id === f.categoryId);
+    const catOk = f.type === 'income' || f.system || state.categories.some(c => c.id === f.categoryId);
     const dayOk = /^\d{4}-\d{2}-\d{2}$/.test(day);
     $('#err-amount').hidden = amount !== null;
     $('#err-cat').hidden = catOk;
@@ -1133,10 +1943,14 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       amount,
       categoryId: f.type === 'expense' ? f.categoryId : null,
       note: $('#f-note').value.trim().slice(0, 80),
+      isSalary: f.type === 'income' && $('#f-salary').checked,
+      method: methodOptions(f.type).includes(f.method) || (f.method.startsWith('card:') && (f.type === 'expense' || f.system)) ? f.method : 'bank',
+      system: f.system || null,
       day,
       createdAt: f.createdAt || Date.now(),
     };
     const ok = commit(() => {
+      if (entry.isSalary) state.period = null;
       if (f.id) state.entries = state.entries.map(e => (e.id === f.id ? entry : e));
       else state.entries.push(entry);
     }, f.id ? 'Değişiklik kaydedildi' : f.type === 'income' ? 'Gelir eklendi' : 'Harcama eklendi');
@@ -1153,7 +1967,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     errEl.hidden = !err;
     if (err) { $('#nc-name').focus(); return; }
     const id = newId();
-    const ok = commit(() => { state.categories.push({ id, name, color: f.ncColor, createdAt: Date.now() }); });
+    const ok = commit(() => { state.categories.push({ id, name, color: f.ncColor, limit: null, createdAt: Date.now() }); });
     if (!ok || sheet !== f) return;
     f.categoryId = id;
     $('#newcat').hidden = true;
@@ -1171,11 +1985,17 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       <form class="form" id="cat-form" novalidate>
         <label class="field"><span>Kategori adı</span><input id="c-name" maxlength="30" autocomplete="off" placeholder="ör. Kahve, Spor, Evcil hayvan" aria-describedby="c-err"><small class="err" id="c-err" hidden></small></label>
         <div class="field"><span class="field-label">Renk</span><div class="swatches" id="c-swatches">${swatches(ctx.color, 'cs-color')}</div></div>
+        <label class="field"><span>Dönemlik bütçe limiti (isteğe bağlı)</span>
+          <span class="amount-wrap"><input id="c-limit" class="limit-input" inputmode="decimal" autocomplete="off" placeholder="Limit yok"><span class="suffix">₺</span></span>
+          <small class="sub">Her maaş döneminde bu kategoriye en fazla ne kadar harcamak istediğini gir. Boş bırakırsan limit olmaz.</small>
+          <small class="err" id="c-limit-err" hidden>Geçerli bir tutar gir ya da boş bırak.</small>
+        </label>
         <div class="preview"><span class="avatar" id="c-prev-av"></span><span id="c-prev-name"></span></div>
         <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button><button type="submit" class="btn btn-primary" id="c-save">Kaydet</button></div>
       </form>`;
     openSheet(html, ctx);
     $('#c-name').value = existing ? existing.name : '';
+    $('#c-limit').value = existing && existing.limit ? amountToInput(existing.limit) : '';
     updateCategoryPreview();
     $('#c-name').focus();
   }
@@ -1195,9 +2015,13 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     $('#c-err').textContent = err || '';
     $('#c-err').hidden = !err;
     if (err) { $('#c-name').focus(); return; }
+    const limitText = $('#c-limit').value.trim();
+    const limit = limitText ? parseAmount(limitText) : null;
+    $('#c-limit-err').hidden = !(limitText && limit === null);
+    if (limitText && limit === null) return;
     const ok = commit(() => {
-      if (f.id) state.categories = state.categories.map(c => (c.id === f.id ? { ...c, name, color: f.color } : c));
-      else state.categories.push({ id: newId(), name, color: f.color, createdAt: Date.now() });
+      if (f.id) state.categories = state.categories.map(c => (c.id === f.id ? { ...c, name, color: f.color, limit } : c));
+      else state.categories.push({ id: newId(), name, color: f.color, limit, createdAt: Date.now() });
     }, f.id ? 'Kategori güncellendi' : 'Kategori eklendi');
     if (ok) closeSheet();
   }
@@ -1223,17 +2047,362 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     });
   }
 
-  function showEntryDeleteConfirm(show) {
-    const box = $('#entry-actions');
-    if (!box) return;
-    box.innerHTML = show
-      ? `<div class="confirm-inline" style="flex:1"><p>Bu kayıt silinsin mi? Bakiyen buna göre güncellenir.</p>
-          <div class="actions"><button type="button" class="btn btn-quiet" data-action="entry-delete-cancel">Vazgeç</button>
-          <button type="button" class="btn btn-danger" data-action="entry-delete-confirm">Sil</button></div></div>`
-      : `<button type="button" class="btn btn-outline-danger" data-action="entry-delete">${ICON.trash}Sil</button>
-         <button type="submit" class="btn btn-primary" id="f-save">Kaydet</button>`;
-    const focusEl = box.querySelector(show ? '.btn-quiet' : '.btn-outline-danger');
-    if (focusEl) focusEl.focus();
+
+  // ---------- Transferler (para çekme / yatırma) ----------
+  function openTransferSheet(id = null) {
+    if (!canWrite()) return;
+    const existing = id ? state.transfers.find(t => t.id === id) : null;
+    if (id && !existing) { toast('Bu kayıt bulunamadı.'); return; }
+    if (existing && existing.kind === 'cardpay') { openCardPaySheet({ id }); return; }
+    const ctx = { kind: 'transfer', id: existing ? existing.id : null, tkind: existing ? existing.kind : 'withdraw', createdAt: existing ? existing.createdAt : 0 };
+    const html = sheetHead(existing ? 'Transferi düzenle' : 'Para çek / yatır') + `
+      <form class="form" id="transfer-form" novalidate>
+        <div class="seg" role="radiogroup" aria-label="Transfer türü">
+          <button type="button" role="radio" data-action="transfer-kind" data-kind="withdraw">Para çek</button>
+          <button type="button" role="radio" data-action="transfer-kind" data-kind="deposit">Bankaya yatır</button>
+        </div>
+        <p class="sub" id="t-help"></p>
+        <label class="field"><span>Tutar</span>
+          <span class="amount-wrap"><input id="f-amount" inputmode="decimal" autocomplete="off" placeholder="0,00"><span class="suffix">₺</span></span>
+          <small class="err" id="err-amount" hidden>Geçerli bir tutar gir.</small>
+        </label>
+        <label class="field"><span>Not (isteğe bağlı)</span><input id="t-note" maxlength="80" autocomplete="off"></label>
+        <label class="field"><span>Tarih</span><input id="f-day" type="date" required></label>
+        <div id="entry-actions" class="actions">
+          ${existing ? `<button type="button" class="btn btn-outline-danger" data-action="transfer-delete">${ICON.trash}Sil</button>` : ''}
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>`;
+    openSheet(html, ctx);
+    $('#f-amount').value = existing ? amountToInput(existing.amount) : '';
+    $('#t-note').value = existing ? existing.note : '';
+    $('#f-day').value = existing ? existing.day : today();
+    applyTransferKind();
+    if (!existing) $('#f-amount').focus();
+  }
+  function applyTransferKind() {
+    document.querySelectorAll('[data-action="transfer-kind"]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.kind === sheet.tkind)));
+    $('#t-help').textContent = sheet.tkind === 'withdraw'
+      ? 'ATM\'den çektiğin para bankadan düşer, cüzdana eklenir. Harcama sayılmaz.'
+      : 'Cüzdandaki parayı bankaya yatırırsın. Gelir sayılmaz.';
+  }
+  function saveTransfer() {
+    const f = sheet;
+    if (!f || f.kind !== 'transfer') return;
+    const amount = parseAmount($('#f-amount').value);
+    const day = $('#f-day').value;
+    $('#err-amount').hidden = amount !== null;
+    if (amount === null || !DAY_RE.test(day)) return;
+    const t = { id: f.id || newId(), kind: f.tkind, amount, day, from: null, cardId: null, note: $('#t-note').value.trim().slice(0, 80), createdAt: f.createdAt || Date.now() };
+    const ok = commit(() => {
+      if (f.id) state.transfers = state.transfers.map(x => (x.id === f.id ? t : x));
+      else state.transfers.push(t);
+    }, f.id ? 'Transfer kaydedildi' : t.kind === 'withdraw' ? 'Para çekme eklendi' : 'Bankaya yatırma eklendi');
+    if (ok) closeSheet();
+  }
+
+  // Cüzdandaki gerçek parayı girince fark kaydı oluşturur
+  function openWalletCountSheet() {
+    if (!canWrite()) return;
+    const b = accountBalances();
+    openSheet(sheetHead('Cüzdanı say') + `
+      <form class="form" id="wallet-form" novalidate>
+        <p class="sheet-text" style="margin:0">Uygulamaya göre cüzdanında <b>${money(b.wallet)}</b> olmalı. Cebindeki parayı sayıp gir; fark varsa "Cüzdan farkı" olarak kaydedilir.</p>
+        <label class="field"><span>Cüzdandaki gerçek para</span>
+          <span class="amount-wrap"><input id="f-amount" inputmode="decimal" autocomplete="off" placeholder="0,00"><span class="suffix">₺</span></span>
+          <small class="err" id="err-amount" hidden>Geçerli bir tutar gir (cüzdan boşsa 0).</small>
+        </label>
+        <p class="sub" id="w-diff"></p>
+        <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button><button type="submit" class="btn btn-primary">Kaydet</button></div>
+      </form>`, { kind: 'wallet', expected: b.wallet });
+    $('#f-amount').focus();
+  }
+  const parseAmountOrZero = text => (/^\s*0*(,0{0,2})?\s*$/.test(text) && text.trim() !== '' ? 0 : parseAmount(text));
+  function updateWalletDiff() {
+    const real = parseAmountOrZero($('#f-amount').value);
+    const el = $('#w-diff');
+    if (real === null) { el.textContent = ''; return; }
+    const d = real - sheet.expected;
+    el.textContent = d === 0 ? 'Fark yok, cüzdan tutuyor.' : d < 0 ? `${money(-d)} eksik: gider olarak kaydedilecek.` : `${money(d)} fazla: gelir olarak kaydedilecek.`;
+  }
+  function saveWalletCount() {
+    const f = sheet;
+    if (!f || f.kind !== 'wallet') return;
+    const real = parseAmountOrZero($('#f-amount').value);
+    $('#err-amount').hidden = real !== null;
+    if (real === null) return;
+    const d = real - f.expected;
+    if (d === 0) { closeSheet(); toast('Cüzdan tutuyor, fark yok'); return; }
+    const e = { id: newId(), type: d < 0 ? 'expense' : 'income', amount: Math.abs(d), categoryId: null, note: 'Cüzdan sayımı', isSalary: false, method: 'wallet', system: 'walletdiff', day: today(), createdAt: Date.now() };
+    if (commit(() => { state.entries.push(e); }, 'Cüzdan farkı kaydedildi')) closeSheet();
+  }
+
+  // ---------- Düzenli işlem penceresi ----------
+  function openRecurringSheet(id = null) {
+    if (!canWrite()) return;
+    const r = id ? state.recurring.find(x => x.id === id) : null;
+    const type = r ? r.type : 'expense';
+    const ctx = { kind: 'recurring', id: r ? r.id : null, type, categoryId: r ? r.categoryId : null, method: r ? r.method : preferredMethod(type), rec: r };
+    openSheet(sheetHead(r ? 'Düzenli işlemi düzenle' : 'Düzenli işlem ekle') + `
+      <form class="form" id="rec-form" novalidate>
+        <div class="seg" role="radiogroup" aria-label="Tür">
+          <button type="button" role="radio" data-action="rec-type" data-type="income">Gelir</button>
+          <button type="button" role="radio" data-action="rec-type" data-type="expense">Gider/Harcama</button>
+        </div>
+        <label class="field"><span>Tutar</span>
+          <span class="amount-wrap"><input id="f-amount" inputmode="decimal" autocomplete="off" placeholder="0,00"><span class="suffix">₺</span></span>
+          <small class="err" id="err-amount" hidden>Geçerli bir tutar gir.</small>
+        </label>
+        <div class="field" id="rec-cat"><span class="field-label">Kategori</span><div class="chips" id="rec-chips"></div><small class="err" id="err-cat" hidden>Bir kategori seç.</small></div>
+        <div class="field"><span class="field-label" id="rec-method-label">Nasıl ödenecek?</span><div class="chips" id="rec-methods"></div></div>
+        <label class="field"><span>Ad / not</span><input id="r-note" maxlength="80" autocomplete="off" placeholder="ör. Kira, Netflix, Maaş"></label>
+        <label class="field"><span>Ayın kaçıncı günü?</span><input id="r-day" inputmode="numeric" maxlength="2" placeholder="1–31"><small class="sub" id="r-first"></small><small class="err" id="err-day" hidden>1 ile 31 arasında bir gün gir.</small></label>
+        <label class="check" id="rec-salary-row"><input type="checkbox" id="r-salary"><span>Maaş <small>Eklendiğinde yeni dönemi başlatır</small></span></label>
+        <label class="check"><input type="checkbox" id="r-active"><span>Etkin <small>Kapalıysa günü gelince sorulmaz</small></span></label>
+        <div id="entry-actions" class="actions">
+          ${r ? `<button type="button" class="btn btn-outline-danger" data-action="rec-delete">${ICON.trash}Sil</button>` : ''}
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>`, ctx);
+    $('#f-amount').value = r ? amountToInput(r.amount) : '';
+    $('#r-note').value = r ? r.note : '';
+    $('#r-day').value = r ? r.dayOfMonth : '';
+    $('#r-salary').checked = r ? r.isSalary : false;
+    $('#r-active').checked = r ? r.active : true;
+    applyRecType();
+    updateRecFirst();
+    if (!r) $('#f-amount').focus();
+  }
+  function applyRecType() {
+    const f = sheet, inc = f.type === 'income';
+    document.querySelectorAll('[data-action="rec-type"]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.type === f.type)));
+    $('#rec-cat').hidden = inc;
+    $('#rec-salary-row').hidden = !inc;
+    $('#rec-method-label').textContent = inc ? 'Hangi hesaba gelecek?' : 'Nasıl ödenecek?';
+    if (!methodOptions(f.type).includes(f.method)) f.method = preferredMethod(f.type);
+    $('#rec-chips').innerHTML = state.categories.map(c =>
+      `<button type="button" class="chip" data-action="rec-cat" data-id="${esc(c.id)}" aria-pressed="${c.id === f.categoryId}" style="${catStyle(c.color)}"><i class="dot"></i>${esc(c.name)}</button>`).join('');
+    $('#rec-methods').innerHTML = methodOptions(f.type).map(m =>
+      `<button type="button" class="chip" data-action="rec-method" data-method="${esc(m)}" aria-pressed="${m === f.method}">${esc(methodName(m))}</button>`).join('');
+  }
+  function updateRecFirst() {
+    const d = Number($('#r-day').value);
+    const el = $('#r-first');
+    if (!clampDay(d)) { el.textContent = ''; return; }
+    const f = sheet;
+    if (f.rec && f.rec.dayOfMonth === d) { el.textContent = ''; return; }
+    const ym = firstMonthFor(d);
+    el.textContent = `İlk kez ${dayName(occurrenceDay({ dayOfMonth: d }, ym))} günü sorulacak.`;
+  }
+  function saveRecurring() {
+    const f = sheet;
+    if (!f || f.kind !== 'recurring') return;
+    const amount = parseAmount($('#f-amount').value);
+    const day = Number($('#r-day').value);
+    const catOk = f.type === 'income' || state.categories.some(c => c.id === f.categoryId);
+    $('#err-amount').hidden = amount !== null;
+    $('#err-day').hidden = !!clampDay(day);
+    $('#err-cat').hidden = catOk;
+    if (amount === null || !clampDay(day) || !catOk) return;
+    const old = f.rec;
+    const r = {
+      id: old ? old.id : newId(), type: f.type, amount, dayOfMonth: day,
+      categoryId: f.type === 'expense' ? f.categoryId : null,
+      note: $('#r-note').value.trim().slice(0, 80), method: f.method,
+      isSalary: f.type === 'income' && $('#r-salary').checked,
+      // Gün değişirse ilk ay yeniden hesaplanır; geçmiş ayların durumu korunur
+      startMonth: old && old.dayOfMonth === day ? old.startMonth : firstMonthFor(day),
+      handled: old ? old.handled : {}, active: $('#r-active').checked, createdAt: old ? old.createdAt : Date.now(),
+    };
+    const ok = commit(() => {
+      if (old) state.recurring = state.recurring.map(x => (x.id === old.id ? r : x));
+      else state.recurring.push(r);
+    }, old ? 'Düzenli işlem güncellendi' : 'Düzenli işlem eklendi');
+    if (ok) closeSheet();
+  }
+
+  // ---------- Kredi kartı pencereleri ----------
+  function cardSummaryHtml(st) {
+    return `<dl class="facts">
+      <dt>Kesilen ekstre</dt><dd>${money(st.statementDue)}${st.statementDue ? ` · son ödeme ${esc(shortDay(st.due))}` : ''}</dd>
+      <dt>Yeni ekstreye yazılan</dt><dd>${money(Math.max(0, st.newStatement))}</dd>
+      <dt>Son kesim</dt><dd>${esc(shortDay(st.lastCut))} · sonraki ${esc(shortDay(st.nextCut))}</dd>
+      <dt>Toplam borç</dt><dd>${money(Math.max(0, st.total))}</dd>
+    </dl>`;
+  }
+  function openCardSheet(id) {
+    const card = cardById(id);
+    if (!card) return;
+    const st = cardStatus(card);
+    openSheet(sheetHead(card.name) + cardSummaryHtml(st) + (canWrite() ? `
+      <div class="backup-grid" style="margin-top:16px">
+        <button type="button" class="btn btn-primary btn-block" data-action="card-pay" data-id="${esc(card.id)}">Kart borcu öde</button>
+        <button type="button" class="btn btn-quiet btn-block" data-action="card-fix-date" data-id="${esc(card.id)}">Ekstre tarihini düzelt</button>
+        <button type="button" class="btn btn-quiet btn-block" data-action="card-fix-amount" data-id="${esc(card.id)}">Ekstre tutarını düzelt</button>
+        <button type="button" class="btn btn-quiet btn-block" data-action="card-edit" data-id="${esc(card.id)}">${ICON.edit}Kartı düzenle</button>
+      </div>` : ''), { kind: 'card-info' });
+  }
+
+  function openCardEditSheet(id = null) {
+    if (!canWrite()) return;
+    const card = id ? cardById(id) : null;
+    const used = card ? cardStatus(card).used : false;
+    openSheet(sheetHead(card ? 'Kartı düzenle' : 'Kart ekle') + `
+      <form class="form" id="card-form" novalidate>
+        <label class="field"><span>Kart adı</span><input id="k-name" maxlength="24" autocomplete="off" placeholder="ör. Bonus, World"></label>
+        <div class="field-row">
+          <label class="field"><span>Hesap kesim günü</span><input id="k-cut" inputmode="numeric" maxlength="2" placeholder="ör. 2"></label>
+          <label class="field"><span>Son ödeme günü</span><input id="k-due" inputmode="numeric" maxlength="2" placeholder="ör. 12"></label>
+        </div>
+        <small class="err" id="k-err" hidden></small>
+        <div id="entry-actions" class="actions">
+          ${card ? `<button type="button" class="btn btn-outline-danger" data-action="card-delete" data-id="${esc(card.id)}">${ICON.trash}${used ? 'Kaldır' : 'Sil'}</button>` : ''}
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+        ${card && used ? '<p class="sub">Kaldırılan kartın geçmiş harcamaları ve ödemeleri silinmez; sadece yeni kayıtlarda seçilemez.</p>' : ''}
+      </form>`, { kind: 'card-edit', id: card ? card.id : null });
+    $('#k-name').value = card ? card.name : '';
+    $('#k-cut').value = card ? card.cutDay : '';
+    $('#k-due').value = card ? card.dueDay : '';
+    $('#k-name').focus();
+  }
+  function saveCard() {
+    const f = sheet;
+    if (!f || f.kind !== 'card-edit') return;
+    const name = $('#k-name').value.trim();
+    const cut = Number($('#k-cut').value), due = Number($('#k-due').value);
+    let err = null;
+    if (!name) err = 'Karta bir ad ver.';
+    else if (state.cards.some(c => c.id !== f.id && !c.archived && c.name.toLocaleLowerCase(TR) === name.toLocaleLowerCase(TR))) err = 'Bu isimde bir kart zaten var.';
+    else if (!clampDay(cut) || !clampDay(due)) err = 'Günler 1 ile 31 arasında olmalı.';
+    $('#k-err').textContent = err || '';
+    $('#k-err').hidden = !err;
+    if (err) return;
+    const ok = commit(() => {
+      if (f.id) state.cards = state.cards.map(c => (c.id === f.id ? { ...c, name, cutDay: cut, dueDay: due } : c));
+      else state.cards.push({ id: newId(), name, cutDay: cut, dueDay: due, cutOverrides: {}, archived: false, createdAt: Date.now() });
+    }, f.id ? 'Kart güncellendi' : 'Kart eklendi');
+    if (ok) closeSheet();
+  }
+  function deleteCard(id) {
+    const card = cardById(id);
+    if (!card) return;
+    const used = cardStatus(card).used;
+    const ok = commit(() => {
+      if (used) state.cards = state.cards.map(c => (c.id === id ? { ...c, archived: true } : c));
+      else state.cards = state.cards.filter(c => c.id !== id);
+    }, used ? 'Kart kaldırıldı' : 'Kart silindi');
+    if (ok) closeSheet();
+  }
+
+  function payFromOptions() { return walletUsed() ? ['bank', 'wallet'] : ['bank']; }
+  function openCardPaySheet({ id = null, cardId = null } = {}) {
+    if (!canWrite()) return;
+    const existing = id ? state.transfers.find(t => t.id === id) : null;
+    const cards = activeCards();
+    const cid = existing ? existing.cardId : cardId || (cards[0] && cards[0].id);
+    if (!cid) { toast('Önce bir kart ekle.'); return; }
+    const ctx = { kind: 'cardpay', id: existing ? existing.id : null, cardId: cid, from: existing ? existing.from : 'bank', createdAt: existing ? existing.createdAt : 0 };
+    openSheet(sheetHead(existing ? 'Borç ödemesini düzenle' : 'Kart borcu öde') + `
+      <form class="form" id="cardpay-form" novalidate>
+        <div class="field"><span class="field-label">Kart</span><div class="chips" id="cp-cards"></div></div>
+        <p class="sub" id="cp-info"></p>
+        <label class="field"><span>Ödenen tutar</span>
+          <span class="amount-wrap"><input id="f-amount" inputmode="decimal" autocomplete="off" placeholder="0,00"><span class="suffix">₺</span></span>
+          <small class="err" id="err-amount" hidden>Geçerli bir tutar gir.</small>
+        </label>
+        <div class="field" id="cp-from-wrap"><span class="field-label">Nereden ödendi?</span><div class="chips" id="cp-from"></div></div>
+        <label class="field"><span>Tarih</span><input id="f-day" type="date" required></label>
+        <p class="sub">Bu bir harcama sayılmaz; tutar nakdinden ve kartın borcundan düşer.</p>
+        <div id="entry-actions" class="actions">
+          ${existing ? `<button type="button" class="btn btn-outline-danger" data-action="transfer-delete">${ICON.trash}Sil</button>` : ''}
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>`, ctx);
+    $('#f-day').value = existing ? existing.day : today();
+    renderCardPay(!existing);
+    if (existing) $('#f-amount').value = amountToInput(existing.amount);
+  }
+  function renderCardPay(fillAmount) {
+    const f = sheet;
+    const opts = activeCards().map(c => c.id);
+    if (!opts.includes(f.cardId)) opts.push(f.cardId);
+    $('#cp-cards').innerHTML = opts.map(id => {
+      const c = cardById(id);
+      return `<button type="button" class="chip" data-action="cp-card" data-id="${esc(id)}" aria-pressed="${id === f.cardId}">${esc(c ? c.name : 'Kart')}</button>`;
+    }).join('');
+    const from = payFromOptions();
+    if (!from.includes(f.from)) from.push(f.from);
+    $('#cp-from').innerHTML = from.map(m => `<button type="button" class="chip" data-action="cp-from" data-method="${m}" aria-pressed="${m === f.from}">${methodName(m)}</button>`).join('');
+    $('#cp-from-wrap').hidden = from.length < 2;
+    const card = cardById(f.cardId);
+    if (card) {
+      const st = cardStatus(card);
+      $('#cp-info').textContent = `Kesilen ekstre: ${money(st.statementDue)}${st.statementDue ? ` (son ödeme ${shortDay(st.due)})` : ''} · toplam borç ${money(Math.max(0, st.total))}`;
+      if (fillAmount) $('#f-amount').value = st.statementDue ? amountToInput(st.statementDue) : '';
+    }
+  }
+  function saveCardPay() {
+    const f = sheet;
+    if (!f || f.kind !== 'cardpay') return;
+    const amount = parseAmount($('#f-amount').value);
+    const day = $('#f-day').value;
+    $('#err-amount').hidden = amount !== null;
+    if (amount === null || !DAY_RE.test(day)) return;
+    const t = { id: f.id || newId(), kind: 'cardpay', amount, day, from: f.from, cardId: f.cardId, note: '', createdAt: f.createdAt || Date.now() };
+    const ok = commit(() => {
+      if (f.id) state.transfers = state.transfers.map(x => (x.id === f.id ? t : x));
+      else state.transfers.push(t);
+    }, 'Kart borcu ödemesi kaydedildi');
+    if (ok) closeSheet();
+  }
+
+  function openCutFixSheet(id) {
+    const card = cardById(id);
+    if (!card || !canWrite()) return;
+    const lc = lastCut(card);
+    openSheet(sheetHead('Ekstre tarihini düzelt') + `
+      <form class="form" id="cutfix-form" novalidate>
+        <p class="sheet-text" style="margin:0">${esc(card.name)} ekstresi bu ay beklenen günden farklı bir günde kesildiyse gerçek tarihi gir. Harcamalar ekstrelere buna göre yeniden dağıtılır.</p>
+        <label class="field"><span>Gerçek kesim tarihi</span><input id="f-day" type="date" required></label>
+        <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button><button type="submit" class="btn btn-primary">Kaydet</button></div>
+      </form>`, { kind: 'cutfix', cardId: id });
+    $('#f-day').value = lc;
+  }
+  function saveCutFix() {
+    const f = sheet;
+    const day = $('#f-day').value;
+    if (!DAY_RE.test(day)) return;
+    const ok = commit(() => {
+      state.cards = state.cards.map(c => (c.id === f.cardId ? { ...c, cutOverrides: { ...c.cutOverrides, [day.slice(0, 7)]: day } } : c));
+    }, 'Kesim tarihi güncellendi');
+    if (ok) closeSheet();
+  }
+
+  function openAmountFixSheet(id) {
+    const card = cardById(id);
+    if (!card || !canWrite()) return;
+    const st = cardStatus(card);
+    openSheet(sheetHead('Ekstre tutarını düzelt') + `
+      <form class="form" id="amountfix-form" novalidate>
+        <p class="sheet-text" style="margin:0">Uygulamaya göre ${esc(card.name)} kesilen ekstresi <b>${money(st.statementDue)}</b>. Bankanın ekstresindeki tutar farklıysa (faiz, aidat, unutulan harcama) gerçek tutarı gir; fark "Kart düzeltmesi" olarak eklenir.</p>
+        <label class="field"><span>Bankadaki ekstre tutarı</span>
+          <span class="amount-wrap"><input id="f-amount" inputmode="decimal" autocomplete="off" placeholder="0,00"><span class="suffix">₺</span></span>
+          <small class="err" id="err-amount" hidden>Geçerli bir tutar gir.</small>
+        </label>
+        <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button><button type="submit" class="btn btn-primary">Kaydet</button></div>
+      </form>`, { kind: 'amountfix', cardId: id, expected: st.statementDue, day: st.lastCut });
+    $('#f-amount').focus();
+  }
+  function saveAmountFix() {
+    const f = sheet;
+    const real = parseAmountOrZero($('#f-amount').value);
+    $('#err-amount').hidden = real !== null;
+    if (real === null) return;
+    const d = real - f.expected;
+    if (d === 0) { closeSheet(); toast('Ekstre tutuyor, fark yok'); return; }
+    const e = { id: newId(), type: d > 0 ? 'expense' : 'income', amount: Math.abs(d), categoryId: null, note: 'Ekstre düzeltmesi', isSalary: false, method: 'card:' + f.cardId, system: 'cardadj', day: f.day, createdAt: Date.now() };
+    if (commit(() => { state.entries.push(e); }, 'Kart düzeltmesi eklendi')) closeSheet();
   }
 
   // ---------- Yedekleme ----------
@@ -1262,13 +2431,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   }
 
   async function exportBackup() {
-    const payload = {
-      app: 'butce-takip',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      categories: state.categories,
-      entries: state.entries,
-    };
+    const payload = Object.assign({ app: 'butce-takip', exportedAt: new Date().toISOString() }, snapshot());
     const name = `butce-yedek-${today()}.json`;
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     let done = false;
@@ -1307,10 +2470,10 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
         toast('Bu dosya bir Bütçe Takip yedeği değil.');
         return;
       }
-      const cats = data.categories.map(toCategory).filter(Boolean);
-      const ents = data.entries.map(toEntry).filter(Boolean);
-      sheet.pending = { categories: cats, entries: ents };
-      body.innerHTML = `<div class="confirm-inline"><p>Yedekte ${ents.length} işlem ve ${cats.length} kategori var. Şu anki kayıtların silinip yerine yedektekiler yüklenecek.</p>
+      const pending = migrate(data);
+      sheet.pending = pending;
+      const extra = pending.transfers.length ? `, ${pending.transfers.length} transfer` : '';
+      body.innerHTML = `<div class="confirm-inline"><p>Yedekte ${pending.entries.length} işlem${extra} ve ${pending.categories.length} kategori var. Şu anki kayıtların silinip yerine yedektekiler yüklenecek.</p>
         <div class="actions"><button type="button" class="btn btn-quiet" data-action="sheet-close">Vazgeç</button>
         <button type="button" class="btn btn-danger" data-action="import-confirm">Geri yükle</button></div></div>`;
       body.querySelector('.btn-quiet').focus();
@@ -1320,7 +2483,58 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   }
 
   // ---------- Olaylar ----------
+  // ---------- Sola kaydırarak silme ----------
+  const SWIPE_W = 88;
+  let swipe = null, swipeMoved = false;
+  function closeSwipes(except) {
+    document.querySelectorAll('.swipe.open').forEach(b => {
+      if (b === except) return;
+      b.classList.remove('open');
+      b.querySelector('.row').style.transform = '';
+    });
+  }
+  document.addEventListener('touchstart', e => {
+    swipeMoved = false;
+    const row = e.target.closest('.swipe > .row');
+    if (!row) { if (!e.target.closest('.swipe-del')) closeSwipes(null); return; }
+    const box = row.parentElement;
+    closeSwipes(box);
+    const p0 = e.touches[0];
+    swipe = { box, row, x0: p0.clientX, y0: p0.clientY, base: box.classList.contains('open') ? -SWIPE_W : 0, dir: null, x: 0 };
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!swipe) return;
+    const p1 = e.touches[0], dx = p1.clientX - swipe.x0, dy = p1.clientY - swipe.y0;
+    if (!swipe.dir) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      swipe.dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      if (swipe.dir === 'h') swipe.box.classList.add('dragging');
+    }
+    if (swipe.dir !== 'h') return;   // dikey kaydırma sayfayı kaydırır
+    e.preventDefault();
+    swipeMoved = true;
+    swipe.x = Math.max(-SWIPE_W - 24, Math.min(0, swipe.base + dx));
+    swipe.row.style.transform = `translateX(${swipe.x}px)`;
+  }, { passive: false });
+  const endSwipe = () => {
+    if (!swipe) return;
+    const sw = swipe;
+    swipe = null;
+    sw.box.classList.remove('dragging');
+    if (sw.dir !== 'h') return;
+    setTimeout(() => { swipeMoved = false; }, 350);
+    const open = sw.x < -SWIPE_W / 2;
+    sw.box.classList.toggle('open', open);
+    sw.row.style.transform = open ? `translateX(${-SWIPE_W}px)` : '';
+  };
+  document.addEventListener('touchend', endSwipe);
+  document.addEventListener('touchcancel', endSwipe);
+
   document.addEventListener('click', e => {
+    // Kaydırma hareketinden sonra gelen tıklamayı yok say; açık satıra dokunmak onu kapatır
+    if (swipeMoved) { swipeMoved = false; e.preventDefault(); return; }
+    const openBox = e.target.closest('.swipe.open');
+    if (openBox && !e.target.closest('.swipe-del')) { closeSwipes(null); return; }
     const t = e.target.closest('[data-action]');
     if (!t) return;
     const a = t.dataset.action;
@@ -1329,11 +2543,15 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       case 'tab': go(t.dataset.view); break;
       case 'back': go(state.prevView || 'categories'); break;
       case 'backup': openBackupSheet(); break;
+      case 'backup-snooze':
+        try { localStorage.setItem(SNOOZE_KEY, String(Date.now() + 7 * 86400000)); } catch (e) { /* önemsiz */ }
+        render();
+        break;
       case 'export': exportBackup(); break;
       case 'import-confirm': {
         const p = sheet && sheet.pending;
         if (!p) break;
-        const ok = commit(() => { state.categories = p.categories; state.entries = p.entries; }, 'Yedek geri yüklendi');
+        const ok = commit(() => { for (const k of COLLECTIONS) state[k] = p[k]; }, 'Yedek geri yüklendi');
         if (ok) closeSheet();
         break;
       }
@@ -1343,11 +2561,22 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
         if (state.view === 'category') openEntrySheet({ type: 'expense', categoryId: state.detailCat });
         else openEntrySheet({ type: state.filter === 'income' ? 'income' : 'expense' });
         break;
-      case 'month-prev': state.month = addMonths(state.month, -1); render(); break;
-      case 'month-next': if (state.month < currentMonth()) { state.month = addMonths(state.month, 1); render(); } break;
-      case 'select-month': state.month = t.dataset.month; render(); break;
+      case 'period-prev':
+      case 'period-next': {
+        const ps = getPeriods();
+        const i = selectedPeriod(ps).index + (a === 'period-prev' ? -1 : 1);
+        if (ps[i]) { state.period = i === ps.length - 1 ? null : ps[i].key; render(); }
+        break;
+      }
+      case 'select-period': {
+        const ps = getPeriods();
+        state.period = ps.length && ps[ps.length - 1].key === t.dataset.period ? null : t.dataset.period;
+        render();
+        break;
+      }
       case 'open-entry': openEntrySheet({ id }); break;
       case 'filter': state.filter = t.dataset.filter; render(); break;
+      case 'clear-filters': state.q = ''; state.range = 'all'; state.from = ''; state.to = ''; state.catFilter = ''; render(); break;
       case 'open-category':
         if (state.view !== 'category') state.prevView = state.view;
         state.view = 'category';
@@ -1362,6 +2591,61 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       case 'form-type':
         if (sheet && sheet.kind === 'entry') { sheet.type = t.dataset.type; applyEntryType(); }
         break;
+      case 'quick-fill': {
+        const src = state.entries.find(e => e.id === id);
+        if (!src || !sheet || sheet.kind !== 'entry') break;
+        $('#f-amount').value = amountToInput(src.amount);
+        $('#err-amount').hidden = true;
+        sheet.categoryId = src.categoryId;
+        if (methodOptions('expense').includes(src.method)) sheet.method = src.method;
+        $('#err-cat').hidden = true;
+        renderChips(); renderMethods();
+        $('#f-save').focus({ preventScroll: true });
+        break;
+      }
+      case 'pick-method':
+        if (sheet && sheet.kind === 'entry') { sheet.method = t.dataset.method; renderMethods(); }
+        break;
+      case 'transfer-new': openTransferSheet(); break;
+      case 'open-transfer': openTransferSheet(id); break;
+      case 'transfer-kind':
+        if (sheet && sheet.kind === 'transfer') { sheet.tkind = t.dataset.kind; applyTransferKind(); }
+        break;
+      case 'transfer-delete': {
+        const f = sheet;
+        if (!f || !f.id) break;
+        closeSheet();
+        deleteWithUndo('transfer', f.id);
+        break;
+      }
+      case 'wallet-count': openWalletCountSheet(); break;
+      case 'open-card': openCardSheet(id); break;
+      case 'rec-new': openRecurringSheet(); break;
+      case 'rec-edit': openRecurringSheet(id); break;
+      case 'rec-type': if (sheet && sheet.kind === 'recurring') { sheet.type = t.dataset.type; applyRecType(); } break;
+      case 'rec-cat': if (sheet && sheet.kind === 'recurring') { sheet.categoryId = id; $('#err-cat').hidden = true; applyRecType(); } break;
+      case 'rec-method': if (sheet && sheet.kind === 'recurring') { sheet.method = t.dataset.method; applyRecType(); } break;
+      case 'rec-delete': {
+        const f = sheet;
+        if (!f || !f.id) break;
+        if (commit(() => { state.recurring = state.recurring.filter(x => x.id !== f.id); }, 'Düzenli işlem silindi')) closeSheet();
+        break;
+      }
+      case 'rec-add':
+      case 'rec-skip': {
+        const x = pendingRecurring().find(p => p.r.id === id && p.ym === t.dataset.month);
+        if (x) applyRecurring([x], a === 'rec-add' ? 'added' : 'skipped');
+        break;
+      }
+      case 'rec-add-all': applyRecurring(pendingRecurring(), 'added'); break;
+      case 'card-new': openCardEditSheet(); break;
+      case 'card-edit': openCardEditSheet(id); break;
+      case 'card-delete': deleteCard(id); break;
+      case 'card-pay': openCardPaySheet({ cardId: id || null }); break;
+      case 'card-fix-date': openCutFixSheet(id); break;
+      case 'card-fix-amount': openAmountFixSheet(id); break;
+      case 'cp-card': if (sheet && sheet.kind === 'cardpay') { sheet.cardId = id; renderCardPay(!sheet.id); } break;
+      case 'cp-from': if (sheet && sheet.kind === 'cardpay') { sheet.from = t.dataset.method; renderCardPay(false); } break;
       case 'pick-cat':
         if (sheet && sheet.kind === 'entry') { sheet.categoryId = id; $('#err-cat').hidden = true; renderChips(); }
         break;
@@ -1378,13 +2662,18 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       case 'cs-color':
         if (sheet && sheet.kind === 'category') { sheet.color = Number(t.dataset.color); markSwatches($('#c-swatches'), sheet.color); updateCategoryPreview(); }
         break;
-      case 'entry-delete': showEntryDeleteConfirm(true); break;
-      case 'entry-delete-cancel': showEntryDeleteConfirm(false); break;
-      case 'entry-delete-confirm': {
+      case 'entry-delete': {
         const f = sheet;
         if (!f || f.kind !== 'entry' || !f.id) break;
-        const ok = commit(() => { state.entries = state.entries.filter(x => x.id !== f.id); }, 'Kayıt silindi');
-        if (ok) closeSheet();
+        closeSheet();
+        deleteWithUndo('entry', f.id);
+        break;
+      }
+      case 'swipe-delete': closeSwipes(null); deleteWithUndo(t.dataset.kind, id); break;
+      case 'toast-action': {
+        const act = toastAction;
+        $('#toast').hidden = true; toastAction = null; clearTimeout(toastTimer);
+        if (act) act.run();
         break;
       }
       case 'confirm-ok': {
@@ -1398,19 +2687,42 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 
   document.addEventListener('input', e => {
     const el = e.target;
-    if (el.id === 'f-amount') {
+    if (el.id === 'q') {
+      state.q = el.value;
+      refreshResults();
+      return;
+    }
+    if (el.id === 'f-amount' || el.id === 'c-limit') {
       const clean = sanitizeAmount(el.value);
       if (clean !== el.value) el.value = clean;
+      if (el.id === 'c-limit') { $('#c-limit-err').hidden = true; return; }
       $('#err-amount').hidden = true;
+      if (sheet && sheet.kind === 'wallet') updateWalletDiff();
     } else if (el.id === 'c-name') {
       $('#c-err').hidden = true;
       updateCategoryPreview();
+    } else if (el.id === 'r-day') {
+      el.value = el.value.replace(/\D/g, '').slice(0, 2);
+      $('#err-day').hidden = true;
+      updateRecFirst();
+    } else if (el.id === 'f-note') {
+      if (sheet && sheet.kind === 'entry' && !sheet.salaryTouched) $('#f-salary').checked = isSalaryNote(el.value);
     } else if (el.id === 'nc-name') {
       $('#nc-err').hidden = true;
     }
   });
 
   document.addEventListener('change', e => {
+    const id = e.target.id;
+    if (id === 'range' || id === 'catf' || id === 'from' || id === 'to') {
+      if (id === 'range') state.range = e.target.value;
+      if (id === 'catf') state.catFilter = e.target.value;
+      if (id === 'from') state.from = e.target.value;
+      if (id === 'to') state.to = e.target.value;
+      render();
+      return;
+    }
+    if (e.target.id === 'f-salary' && sheet && sheet.kind === 'entry') sheet.salaryTouched = true;
     if (e.target.id === 'import-file' && e.target.files && e.target.files[0]) {
       handleImportFile(e.target.files[0]);
       e.target.value = '';
@@ -1420,6 +2732,13 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   document.addEventListener('submit', e => {
     e.preventDefault();
     if (e.target.id === 'entry-form') saveEntry();
+    else if (e.target.id === 'transfer-form') saveTransfer();
+    else if (e.target.id === 'wallet-form') saveWalletCount();
+    else if (e.target.id === 'card-form') saveCard();
+    else if (e.target.id === 'rec-form') saveRecurring();
+    else if (e.target.id === 'cardpay-form') saveCardPay();
+    else if (e.target.id === 'cutfix-form') saveCutFix();
+    else if (e.target.id === 'amountfix-form') saveAmountFix();
     else if (e.target.id === 'cat-form') saveCategory();
   });
 
