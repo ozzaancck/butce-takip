@@ -1,6 +1,6 @@
 // Uygulamanın internetsiz çalışmasını sağlayan servis çalışanı.
 // Dosyalarda değişiklik yaptığında CACHE adındaki sürüm numarasını artır (v2, v3...).
-const CACHE = 'butce-takip-v2';
+const CACHE = 'butce-takip-v3';
 const FONT_CACHE = 'butce-fonts';
 const ASSETS = [
   './',

@@ -823,6 +823,21 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     return true;
   }
 
+  // ---------- Android uygulaması bağlantıları (window.AndroidBridge sadece APK içinde var) ----------
+  const isAndroidApp = !!window.AndroidBridge;
+  let legacyCount = 0;
+  function readLegacy() {
+    try {
+      if (!isAndroidApp || !window.AndroidBridge.getLegacyData) return null;
+      const raw = window.AndroidBridge.getLegacyData();
+      if (!raw) return null;
+      const d = JSON.parse(raw);
+      return d && Array.isArray(d.entries) && d.entries.length ? d : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function loadInitial() {
     const data = readStore();
     if (data === undefined) {
@@ -830,6 +845,17 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
       return;
     }
     if (data === null) {
+      // Android: eski (1.0) uygulamada kayıt varsa onları aktar
+      const legacy = readLegacy();
+      if (legacy) {
+        applyData(legacy);
+        state.storageOk = writeStore();
+        if (state.storageOk) {
+          try { window.AndroidBridge.legacyImported(); } catch (e) { /* önemsiz */ }
+          legacyCount = state.entries.length;
+        }
+        return;
+      }
       // İlk açılış: hazır kategorileri oluştur
       const now = Date.now();
       state.categories = DEFAULT_CATEGORIES.map(([id, name], i) => ({ id, name, color: i, limit: null, createdAt: now })).sort(byName);
@@ -2416,7 +2442,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   }
   function openBackupSheet() {
     const html = sheetHead('Yedekleme') + `
-      <p class="sheet-text">Kayıtların sadece bu cihazda duruyor. Uygulamayı ana ekrandan silersen ya da telefon değiştirirsen kaybolur. Ara sıra yedek al ve dosyayı iCloud Drive'a (Dosyalar'a) kaydet.</p>
+      <p class="sheet-text">Kayıtların sadece bu cihazda duruyor. Uygulamayı ana ekrandan silersen ya da telefon değiştirirsen kaybolur. Ara sıra yedek al ve dosyayı ${isAndroidApp ? "Google Drive'a ya da telefona" : "iCloud Drive'a (Dosyalar'a)"} kaydet.</p>
       <dl class="facts">
         <dt>Kayıtlar</dt><dd>${state.entries.length} işlem, ${state.categories.length} kategori</dd>
         <dt>Son yedek</dt><dd>${esc(lastBackupText())}</dd>
@@ -2430,9 +2456,25 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     $('#sheet-root .sheet-head .icon-btn').focus({ preventScroll: true });
   }
 
+  // Android'de kaydetme sonucu buraya bildirilir
+  window.__onBackupSaved = (ok, cancelled) => {
+    if (ok) {
+      try { localStorage.setItem(BACKUP_KEY, String(Date.now())); } catch (e) { /* önemsiz */ }
+      render();
+      toast('Yedek kaydedildi');
+    } else if (!cancelled) {
+      toast('Yedek kaydedilemedi. Başka bir yer seçip tekrar dene.');
+    }
+  };
+
   async function exportBackup() {
     const payload = Object.assign({ app: 'butce-takip', exportedAt: new Date().toISOString() }, snapshot());
     const name = `butce-yedek-${today()}.json`;
+    if (isAndroidApp && window.AndroidBridge.saveBackup) {
+      closeSheet();
+      window.AndroidBridge.saveBackup(name, JSON.stringify(payload, null, 2));
+      return;
+    }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     let done = false;
     try {
@@ -2779,10 +2821,21 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
     if (data) { applyData(data); render(); }
   });
 
+  // Android geri tuşu: açık pencereyi kapat, önceki görünüme dön; başka iş yoksa false (uygulamadan çık)
+  window.__androidBack = () => {
+    if (sheet) { closeSheet(); return true; }
+    if (document.querySelector('.swipe.open')) { closeSwipes(null); return true; }
+    if (state.view === 'category') { go(state.prevView || 'categories'); return true; }
+    if (state.view !== 'home') { go('home'); return true; }
+    return false;
+  };
+
   loadInitial();
   render();
+  if (legacyCount) toast(`Eski uygulamadaki ${legacyCount} kayıt aktarıldı`);
 
-  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  // APK içinde dosyalar zaten telefonda; servis çalışanı sadece web sürümünde gerekli
+  if ('serviceWorker' in navigator && location.protocol !== 'file:' && !isAndroidApp) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
